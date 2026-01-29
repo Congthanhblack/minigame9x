@@ -3,20 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15 Câu Sinh Tử - Pro Version</title>
+    <title>15 Câu Sinh Tử - NCT Edition</title>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #020230; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .box { width: 95%; max-width: 480px; background: #000; border: 3px solid gold; border-radius: 16px; padding: 25px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-        h1, h2 { text-align: center; color: gold; margin-top: 0; }
-        .btn { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 2px solid gold; background: #000; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: gold; color: #000; }
-        .option { border: 1px solid #0984e3; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.05); }
-        .option:hover { background: rgba(9, 132, 227, 0.2); border-color: #fff; }
-        .correct { background: #27ae60 !important; border-color: #2ecc71 !important; color: white; }
-        .wrong { background: #e74c3c !important; border-color: #ff7675 !important; color: white; }
+        :root {
+            --gold: #f1c40f; --blue: #3498db; --dark: #020230; --red: #e74c3c; --green: #2ecc71;
+        }
+        body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; overflow: hidden; }
+        .box { width: 95%; max-width: 500px; background: #000; border: 2px solid var(--gold); border-radius: 20px; padding: 25px; box-shadow: 0 0 30px rgba(241, 196, 15, 0.3); position: relative; }
+        
+        h1, h2 { text-align: center; color: var(--gold); margin: 10px 0; }
+        .rule-list { font-size: 0.9em; line-height: 1.6; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px dashed var(--gold); }
+        
+        #timer { font-size: 2em; text-align: center; font-weight: bold; color: var(--red); text-shadow: 0 0 10px var(--red); margin: 10px 0; }
+        
+        .options-grid { display: grid; gap: 10px; margin-top: 20px; }
+        .option { padding: 12px; border: 1px solid var(--blue); border-radius: 8px; cursor: pointer; transition: 0.2s; background: rgba(52, 152, 219, 0.1); }
+        .option:hover { background: rgba(52, 152, 219, 0.3); }
+        .option.correct { background: var(--green) !important; border-color: #fff; }
+        .option.wrong { background: var(--red) !important; border-color: #fff; }
+        .option.hidden-50 { opacity: 0.2; pointer-events: none; }
+        
+        .btn { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 2px solid var(--gold); background: transparent; color: var(--gold); font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover:not(:disabled) { background: var(--gold); color: #000; }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        #explain { color: var(--gold); margin-top: 15px; font-style: italic; text-align: center; min-height: 20px; }
         .hidden { display: none; }
-        #explain { color: #f1c40f; margin-top: 15px; padding: 10px; border-left: 3px solid gold; background: rgba(241, 196, 15, 0.1); font-style: italic; }
-        small { opacity: .6; display: block; text-align: center; margin-top: 15px; }
+        .nct-signature { text-align: center; font-size: 0.75em; opacity: 0.5; margin-top: 20px; letter-spacing: 1px; }
         .disabled { pointer-events: none; }
     </style>
 </head>
@@ -25,171 +38,194 @@
 <div class="box">
     <div id="screen-start">
         <h1>🧠 15 CÂU SINH TỬ</h1>
-        <p style="text-align: center;">Vượt qua 15 câu hỏi hóc búa để trở thành Huyền Thoại.</p>
-        <button class="btn" onclick="startGame()">BẮT ĐẦU</button>
-        <button class="btn" style="border-color: #555; font-size: 0.8em;" onclick="resetProgress()">XÓA LỊCH SỬ CÂU HỎI</button>
+        <div class="rule-list">
+            📍 <b>Luật chơi:</b><br>
+            1. Trả lời đúng 15 câu để thành Huyền Thoại.<br>
+            2. Mỗi câu có <b>20 giây</b> suy nghĩ.<br>
+            3. Quyền trợ giúp <b>50:50</b> (duy nhất 1 lần).<br>
+            4. Từ câu 10, bạn có quyền <b>Dừng chơi</b> để bảo toàn danh dự.
+        </div>
+        <button class="btn" onclick="game.start()">BẮT ĐẦU CHINH PHỤC</button>
+        <div class="nct-signature">Sản phẩm giải trí được tinh chỉnh bởi NCT ✨</div>
     </div>
 
     <div id="screen-play" class="hidden">
-        <h2 id="progress"></h2>
-        <p id="question" style="font-size: 1.1em; min-height: 50px;"></p>
-        <div id="options"></div>
+        <div id="timer">20</div>
+        <h2 id="progress" style="font-size: 1em;">Câu 1/15</h2>
+        <p id="question" style="font-size: 1.1em; text-align: center; font-weight: 500;"></p>
+        
+        <div class="options-grid" id="options"></div>
+        
         <div id="explain" class="hidden"></div>
-        <button id="stopBtn" class="btn hidden" onclick="stopGame()" style="margin-top: 20px; border-color: #e67e22;">⏹️ DỪNG CUỘC CHƠI</button>
+        
+        <button id="help-btn" class="btn" style="border-color: #9b59b6; color: #9b59b6;" onclick="game.useHelp()">🆘 TRỢ GIÚP 50:50</button>
+        <button id="stop-btn" class="btn hidden" style="border-color: #e67e22; color: #e67e22;" onclick="game.stop()">⏹️ DỪNG CUỘC CHƠI</button>
     </div>
 
     <div id="screen-result" class="hidden">
-        <h1 id="resultTitle"></h1>
-        <p id="resultMsg" style="text-align: center; font-size: 1.2em;"></p>
+        <h1 id="res-title">KẾT QUẢ</h1>
+        <p id="res-msg" style="text-align: center; line-height: 1.5; font-size: 1.1em;"></p>
         <button class="btn" onclick="location.reload()">CHƠI LẠI</button>
-        <small>Game giải trí nhỏ của NCT - Phiên bản Nâng cấp</small>
+        <div class="nct-signature">Hy vọng bạn đã có những giây phút thư giãn - NCT</div>
     </div>
 </div>
 
 <script>
-/* ================== DATA ================== */
+/* ================== DATABASE ================== */
 const QUESTIONS = [
-    {id:1,level:"easy",q:"Tháng nào có 28 ngày?",o:["Tháng 2","Tất cả các tháng","Tháng nhuận","Không có"],c:[1]},
-    {id:2,level:"easy",q:"1 + 1 = ?",o:["1","2","3","4"],c:[1]},
-    {id:3,level:"easy",q:"Mặt trời mọc hướng nào?",o:["Tây","Đông","Nam","Bắc"],c:[1]},
-    {id:4,level:"easy",q:"Con gì kêu gâu gâu?",o:["Mèo","Chó","Gà","Bò"],c:[1]},
-    {id:5,level:"easy",q:"Việt Nam ở châu nào?",o:["Á","Âu","Phi","Mỹ"],c:[0]},
-    {id:20,level:"medium",q:"Có công mài ___ có ngày nên kim",o:["dao","sắt","búa","kiếm"],c:[1]},
-    {id:21,level:"medium",q:"Số nguyên tố nhỏ nhất?",o:["1","2","3","0"],c:[1]},
-    {id:22,level:"medium",q:"HTML dùng để?",o:["Style","Logic","Cấu trúc web","Server"],c:[2]},
-    {id:23,level:"medium",q:"Đơn vị đo điện áp?",o:["A","V","W","Hz"],c:[1]},
-    {id:24,level:"medium",q:"Trái đất quay quanh?",o:["Mặt trăng","Sao Hỏa","Mặt trời","Sao Kim"],c:[2]},
-    {id:40,level:"hard",q:"Số nào vừa là chính phương vừa là lập phương?",o:["16","36","64","81"],c:[2],explain:"64 = 8² và cũng = 4³"},
-    {id:41,level:"hard",q:"Thứ gì càng lấy đi càng lớn?",o:["Tiền","Cái hố","Thời gian","Nợ"],c:[1],explain:"Khi bạn lấy đất đi, cái hố sẽ to ra."},
-    {id:42,level:"hard",q:"Hành tinh nào sau đây KHÔNG có mặt trăng?",o:["Sao Kim","Trái Đất","Sao Hỏa","Sao Mộc"],c:[0],explain:"Sao Kim và Sao Thủy không có vệ tinh tự nhiên."},
-    {id:43,level:"hard",q:"Hiện tượng nào khiến bầu trời có màu xanh?",o:["Phản chiếu đại dương","Tán xạ Rayleigh","Hiệu ứng nhà kính","Khúc xạ nước"],c:[1],explain:"Các bước sóng ngắn (xanh) bị tán xạ mạnh hơn bởi khí quyển."},
-    {id:44,level:"hard",q:"Câu nói nào tạo ra nghịch lý tự thân?",o:["Tôi đang nói dối","2 + 2 = 5","Mặt trời mọc hướng Tây","Con gà có trước quả trứng"],c:[0],explain:"Nếu câu 'Tôi đang nói dối' là đúng, thì người đó đang nói thật, dẫn đến mâu thuẫn."}
+    {id:1,level:"easy",q:"Tháng nào có 28 ngày?",o:["Tháng 2","Tất cả các tháng","Tháng nhuận","Tháng 12"],c:1},
+    {id:2,level:"easy",q:"Bánh chưng hình gì?",o:["Hình tròn","Hình tam giác","Hình vuông","Hình lục giác"],c:2},
+    {id:3,level:"easy",q:"Con chó có mấy chân?",o:["2 chân","4 chân","6 chân","8 chân"],c:1},
+    {id:4,level:"easy",q:"Màu nào trộn giữa Đỏ và Vàng?",o:["Xanh lá","Tím","Cam","Hồng"],c:2},
+    {id:5,level:"easy",q:"Loài chim nào không biết bay?",o:["Đà điểu","Đại bàng","Bồ câu","Sẻ"],c:0},
+    {id:20,level:"medium",q:"Số nào là số nguyên tố nhỏ nhất?",o:["0","1","2","3"],c:2},
+    {id:21,level:"medium",q:"HTML là viết tắt của từ nào?",o:["Hyperlink Text","HyperText Markup","High Text Machine","Hyper Tool"],c:1},
+    {id:22,level:"medium",q:"Kim tự tháp Giza ở đâu?",o:["Iran","Iraq","Ai Cập","Thổ Nhĩ Kỳ"],c:2},
+    {id:23,level:"medium",q:"Trái đất mất bao lâu để quay 1 vòng quanh Mặt trời?",o:["24 giờ","30 ngày","365 ngày","12 tháng"],c:2},
+    {id:24,level:"medium",q:"Đơn vị đo cường độ dòng điện?",o:["Vôn (V)","Ampe (A)","Oát (W)","Ôm (Ω)"],c:1},
+    {id:40,level:"hard",q:"Nghịch lý: 'Tôi đang nói dối'. Nếu tôi nói thật thì tôi...?",o:["Đang nói dối","Đang nói thật","Không xác định","Đúng"],c:0, e:"Nếu tôi nói thật, thì nội dung 'tôi nói dối' phải đúng, suy ra tôi đang nói dối."},
+    {id:41,level:"hard",q:"Số nào vừa là chính phương vừa là lập phương?",o:["16","36","64","81"],c:2, e:"64 = 8^2 và 4^3."},
+    {id:42,level:"hard",q:"Hành tinh nào không có mặt trăng?",o:["Sao Hỏa","Sao Kim","Sao Mộc","Sao Thổ"],c:1, e:"Sao Thủy và Sao Kim không có vệ tinh."},
+    {id:43,level:"hard",q:"Vì sao bầu trời có màu xanh?",o:["Phản xạ biển","Tán xạ Rayleigh","Tầng Ozon","Bụi vũ trụ"],c:1, e:"Ánh sáng xanh có bước sóng ngắn bị tán xạ mạnh nhất."},
+    {id:44,level:"hard",q:"Quốc gia nào có diện tích lớn nhất?",o:["Mỹ","Trung Quốc","Nga","Canada"],c:2}
 ];
 
-/* ================== LOGIC ================== */
-const LOCK_KEY="LOCKED_IDS";
-let locked=JSON.parse(localStorage.getItem(LOCK_KEY)||"[]");
-let pack=[], index=0;
+/* ================== GAME LOGIC ================== */
+const game = {
+    index: 0,
+    pack: [],
+    timer: 20,
+    interval: null,
+    hasUsedHelp: false,
+    lockedIds: JSON.parse(localStorage.getItem("LOCKED_NCT") || "[]"),
 
-const startScr=document.getElementById("screen-start"),
-      playScr=document.getElementById("screen-play"),
-      resultScr=document.getElementById("screen-result"),
-      progress=document.getElementById("progress"),
-      question=document.getElementById("question"),
-      options=document.getElementById("options"),
-      explainBox=document.getElementById("explain"),
-      stopBtn=document.getElementById("stopBtn"),
-      resultTitle=document.getElementById("resultTitle"),
-      resultMsg=document.getElementById("resultMsg");
+    start() {
+        this.pack = this.buildPack();
+        if(this.pack.length < 15) {
+            alert("Bạn đã trả lời hết câu hỏi trong kho! Hệ thống sẽ reset lại.");
+            localStorage.removeItem("LOCKED_NCT");
+            location.reload();
+            return;
+        }
+        document.getElementById('screen-start').classList.add('hidden');
+        document.getElementById('screen-play').classList.remove('hidden');
+        this.loadQuestion();
+    },
 
-function buildPack(){
-    const pick=(lvl,n) => {
-        let pool = QUESTIONS.filter(q => q.level === lvl && !locked.includes(q.id));
-        if(pool.length < n) pool = QUESTIONS.filter(q => q.level === lvl); // Reset pool nếu hết câu hỏi
-        return pool.sort(() => Math.random() - 0.5).slice(0, n);
-    };
-    return [...pick("easy",5), ...pick("medium",5), ...pick("hard",5)];
-}
+    buildPack() {
+        const get = (lvl, n) => QUESTIONS.filter(q => q.level === lvl && !this.lockedIds.includes(q.id))
+                                        .sort(() => Math.random() - 0.5).slice(0, n);
+        return [...get('easy', 5), ...get('medium', 5), ...get('hard', 5)];
+    },
 
-function startGame(){
-    pack = buildPack();
-    index = 0;
-    show(playScr);
-    loadQ();
-}
-
-function loadQ(){
-    const q = pack[index];
-    progress.innerText = `Câu ${index+1}/15`;
-    question.innerText = q.q;
-    options.innerHTML = "";
-    explainBox.classList.add("hidden");
-    
-    q.o.forEach((text, i) => {
-        const d = document.createElement("div");
-        d.className = "option";
-        d.innerText = text;
-        d.onclick = () => checkAnswer(i);
-        options.appendChild(d);
-    });
-    
-    // Chỉ hiện nút Dừng từ câu 10 trở đi (Mốc quan trọng)
-    stopBtn.classList.toggle("hidden", index < 9);
-}
-
-function checkAnswer(userChoice){
-    const q = pack[index];
-    const allOptions = document.querySelectorAll(".option");
-    
-    // Vô hiệu hóa click để tránh bấm nhiều lần
-    options.classList.add("disabled");
-
-    if(q.c.includes(userChoice)){
-        // TRẢ LỜI ĐÚNG
-        allOptions[userChoice].classList.add("correct");
+    loadQuestion() {
+        clearInterval(this.interval);
+        const q = this.pack[this.index];
+        this.timer = 20;
+        document.getElementById('timer').innerText = this.timer;
+        document.getElementById('timer').style.color = "var(--red)";
         
-        setTimeout(() => {
-            index++;
-            if(index === 15){
-                lockTouched(true);
-                win();
-            } else {
-                options.classList.remove("disabled");
-                loadQ();
+        document.getElementById('progress').innerText = `CÂU ${this.index + 1}/15`;
+        document.getElementById('question').innerText = q.q;
+        document.getElementById('explain').classList.add('hidden');
+        document.getElementById('stop-btn').classList.toggle('hidden', this.index < 9);
+        document.getElementById('help-btn').disabled = this.hasUsedHelp;
+
+        const optBox = document.getElementById('options');
+        optBox.innerHTML = '';
+        optBox.classList.remove('disabled');
+
+        q.o.forEach((t, i) => {
+            const d = document.createElement('div');
+            d.className = 'option';
+            d.innerHTML = `<b>${String.fromCharCode(65+i)}.</b> ${t}`;
+            d.onclick = () => this.check(i);
+            optBox.appendChild(d);
+        });
+
+        this.interval = setInterval(() => {
+            this.timer--;
+            document.getElementById('timer').innerText = this.timer;
+            if(this.timer <= 0) {
+                clearInterval(this.interval);
+                this.end("HẾT GIỜ!", "Thời gian không chờ đợi ai, nhất là những người chậm chạp...");
             }
-        }, 800);
-    } else {
-        // TRẢ LỜI SAI
-        allOptions[userChoice].classList.add("wrong");
-        // Hiển thị đáp án đúng cho người chơi thấy
-        q.c.forEach(correctIdx => allOptions[correctIdx].classList.add("correct"));
+        }, 1000);
+    },
+
+    useHelp() {
+        if(this.hasUsedHelp) return;
+        this.hasUsedHelp = true;
+        document.getElementById('help-btn').disabled = true;
         
-        explainBox.innerText = q.explain || "Bạn đã chọn sai mất rồi!";
-        explainBox.classList.remove("hidden");
+        const q = this.pack[this.index];
+        const corrects = [q.c];
+        const incorrects = [0,1,2,3].filter(i => i !== q.c);
+        const toHide = incorrects.sort(() => Math.random() - 0.5).slice(0, 2);
         
-        setTimeout(() => {
-            lockTouched();
-            lose();
-        }, 2000);
+        const optElements = document.querySelectorAll('.option');
+        toHide.forEach(idx => optElements[idx].classList.add('hidden-50'));
+    },
+
+    check(idx) {
+        clearInterval(this.interval);
+        const q = this.pack[this.index];
+        const optElements = document.querySelectorAll('.option');
+        document.getElementById('options').classList.add('disabled');
+
+        if(idx === q.c) {
+            optElements[idx].classList.add('correct');
+            this.index++;
+            setTimeout(() => {
+                if(this.index === 15) this.win();
+                else this.loadQuestion();
+            }, 1000);
+        } else {
+            optElements[idx].classList.add('wrong');
+            optElements[q.c].classList.add('correct');
+            if(q.e) {
+                const exp = document.getElementById('explain');
+                exp.innerText = "💡 " + q.e;
+                exp.classList.remove('hidden');
+            }
+            this.saveProgress();
+            setTimeout(() => this.lose(), 2000);
+        }
+    },
+
+    saveProgress() {
+        const passedIds = this.pack.slice(0, this.index).map(q => q.id);
+        this.lockedIds = [...new Set([...this.lockedIds, ...passedIds])];
+        localStorage.setItem("LOCKED_NCT", JSON.stringify(this.lockedIds));
+    },
+
+    stop() {
+        this.saveProgress();
+        this.end("⏹️ DỪNG CUỘC CHƠI", `Bạn dừng lại ở câu ${this.index + 1}. Một quyết định sáng suốt và đầy lý trí!`);
+    },
+
+    lose() {
+        let troll = "";
+        if(this.index < 5) troll = "Đến học sinh lớp 1 còn làm tốt hơn bạn... 🙄";
+        else if(this.index < 10) troll = "Cũng cố gắng đấy, nhưng bộ não này cần bảo trì rồi! 🛠️";
+        else troll = "Suýt chút nữa thành Huyền thoại. Tiếc quá!";
+        
+        this.end("💀 THUA CUỘC", troll);
+    },
+
+    win() {
+        this.saveProgress();
+        this.end("👑 HUYỀN THOẠI", "15/15! Bạn chính là bộ não quái kiệt mà chúng tôi tìm kiếm! 🔥");
+    },
+
+    end(title, msg) {
+        clearInterval(this.interval);
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+        document.getElementById('res-title').innerText = title;
+        document.getElementById('res-msg').innerText = msg;
     }
-}
-
-function lockTouched(isWin = false){
-    const touched = isWin ? pack : pack.slice(0, index + 1);
-    touched.forEach(q => { if(!locked.includes(q.id)) locked.push(q.id); });
-    localStorage.setItem(LOCK_KEY, JSON.stringify(locked));
-}
-
-function stopGame(){
-    resultTitle.innerText = "⏹️ DỪNG CUỘC CHƠI";
-    resultMsg.innerText = `Quyết định an toàn! Bạn dừng ở câu ${index+1} với số điểm danh dự.`;
-    show(resultScr);
-}
-
-function lose(){
-    resultTitle.innerText = "💀 THUA CUỘC";
-    resultMsg.innerText = index < 5 ? "Bạn cần học thêm chút nữa rồi... 😅" : `Bạn đã dừng bước ở câu số ${index+1}.`;
-    show(resultScr);
-}
-
-function win(){
-    resultTitle.innerText = "👑 HUYỀN THOẠI!";
-    resultMsg.innerText = "Không thể tin nổi! Bạn đã vượt qua 15 câu hỏi sinh tử! 🧠🔥";
-    show(resultScr);
-}
-
-function resetProgress(){
-    if(confirm("Xóa lịch sử sẽ làm mới toàn bộ kho câu hỏi. Bạn chắc chứ?")){
-        localStorage.removeItem(LOCK_KEY);
-        locked = [];
-        alert("Đã làm mới kho câu hỏi!");
-    }
-}
-
-function show(scr){
-    [startScr, playScr, resultScr].forEach(s => s.classList.add("hidden"));
-    scr.classList.remove("hidden");
-}
+};
 </script>
 </body>
 </html>
