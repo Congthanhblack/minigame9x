@@ -1,119 +1,105 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party Mini Game - Bốc Thăm May Mắn</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 400px;
-        }
-        h1 { color: #2d3436; }
-        .box-draw {
-            font-size: 50px;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .box-draw:hover { transform: scale(1.1); }
-        button {
-            background-color: #0984e3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover { background-color: #74b9ff; }
-        #game-area { margin-top: 20px; }
-        .hidden { display: none; }
-        .result { font-weight: bold; color: #d63031; margin-bottom: 10px; }
-    </style>
-</head>
-<body>
+const gameData = {
+    modes: {
+        easy: { vi: "DỄ", zh: "简单", base: 1 },
+        medium: { vi: "TRUNG BÌNH", zh: "中等", base: 2 },
+        hard: { vi: "KHÓ", zh: "困难", base: 5 }
+    },
+    questions: {
+        vi: [
+            { q: "Con mèo nào cực kỳ sợ chuột?", q2: "哪只猫非常怕老鼠？", options: ["Mèo máy Doraemon", "Mèo Tom", "Mèo Oggy", "Mèo Kitty"], a: 0 },
+            { q: "Quả gì bỏ hạt thì ăn được, bỏ vỏ thì không?", q2: "什么水果去籽能吃，去皮不能吃？", options: ["Quả dưa hấu", "Quả ngô (bắp)", "Quả lạc (đậu phộng)", "Quả trứng"], a: 1 },
+            { q: "Sơn Tùng M-TP có biệt danh là gì?", q2: "歌手 Sơn Tùng M-TP 的昵称是什么？", options: ["Sếp", "Tùng Núi", "Sky", "Cả 3 đều đúng"], a: 3 },
+            { q: "Tháng nào trong năm có 28 ngày?", q2: "一年中哪个月有28天？", options: ["Tháng 2", "Tháng Chạp", "Tháng nào cũng có", "Tháng nhuận"], a: 2 },
+            { q: "Bánh chưng hình vuông tượng trưng cho gì?", q2: "方形粽子象征着什么？", options: ["Đất", "Trời", "Sự giàu sang", "Gia đình"], a: 0 },
+            { q: "Trong 12 con giáp Việt Nam, con nào khác với Trung Quốc?", q2: "越南十二生肖中，哪只与中国不同？", options: ["Con Thỏ/Mèo", "Con Trâu/Bò", "Con Hổ", "Con Dê"], a: 0 },
+            { q: "Tỉnh nào của VN có tên bắt đầu bằng chữ 'T' nhiều nhất?", q2: "越南哪个字母开头的省份最多？", options: ["Chữ H", "Chữ T", "Chữ Q", "Chữ N"], a: 1 },
+            { q: "Nắng ba năm tôi không bỏ bạn, mưa một ngày bạn bỏ tôi là cái gì?", q2: "晴天不离开，雨天就离开，是什么？", options: ["Cái nón", "Đôi dép", "Cái bóng", "Người yêu cũ"], a: 2 },
+            { q: "Linh vật của SEA Games 31 tổ chức tại VN là con gì?", q2: "在越南举行的第31届东南亚运动会吉祥物是什么？", options: ["Trâu vàng", "Sao la", "Chim hạc", "Rồng"], a: 1 },
+            { q: "Nghệ thuật cải lương bắt nguồn từ miền nào?", q2: "改良戏（Cải Lương）起源于哪里？", options: ["Miền Bắc", "Miền Trung", "Miền Nam", "Tây Nguyên"], a: 2 }
+        ],
+        zh: [
+            { q: "‘三个臭皮匠’ 下一句是？", q2: "Câu tiếp theo của 'Ba thợ da' là?", options: ["赛过诸葛亮", "还是臭皮匠", "各师各法", "不分上下"], a: 0 },
+            { q: "‘囧’ 这个字通常表达什么意思？", q2: "Chữ 'Jiǒng' thường biểu đạt ý nghĩa gì?", options: ["开心", "尴尬/无奈", "生气", "非常有钱"], a: 1 },
+            { q: "火锅中的 '毛肚' 是牛的哪个部位？", q2: "'Sách bò' trong lẩu là bộ phận nào của con bò?", options: ["胃", "肝", "肠", "肺"], a: 0 },
+            { q: "哪种水果被称为 '果中之王'？", q2: "Loại quả nào được gọi là 'Vua của các loại trái cây'?", options: ["西瓜", "榴莲", "苹果", "香蕉"], a: 1 },
+            { q: "中国被称为 '瓷器之国'，瓷器的英文是？", q2: "Trung Quốc là đất nước gốm sứ, từ tiếng Anh của sứ là?", options: ["Japan", "China", "Vietnam", "India"], a: 1 },
+            { q: "西游记中，谁想吃唐僧肉？", q2: "Trong Tây Du Ký, ai muốn ăn thịt Đường Tăng?", options: ["孙悟空", "白骨精", "猪八戒", "沙和尚"], a: 1 },
+            { q: "中国的 '国球' 是什么？", q2: "Môn thể thao 'Quốc bảo' của Trung Quốc là gì?", options: ["足球", "篮球", "乒乓球", "羽毛球"], a: 2 },
+            { q: "‘元宵节’ 为什么要吃汤圆？", q2: "Tại sao Tết Nguyên Tiêu lại ăn thang viên?", options: ["团团圆圆", "年年有余", "招财进宝", "步步高升"], a: 0 },
+            { q: "以下哪个不是中国的直辖市？", q2: "Thành phố nào không phải thành phố trực thuộc trung ương?", options: ["北京", "上海", "深圳", "重庆"], a: 2 },
+            { q: "古代诗人的 '诗仙' 指的是谁？", q2: "Trong các thi sĩ cổ đại, 'Thi Tiên' chỉ ai?", options: ["杜甫", "李白", "白居易", "王维"], a: 1 }
+        ]
+    }
+};
 
-<div class="container">
-    <h1>🎉 Party Game!</h1>
-    <p>Nhấn vào hộp quà để bắt đầu</p>
+let config = { lang: 'vi', mode: 'easy', step: 0, currentQuestions: [] };
+
+// Hàm xáo trộn mảng để câu hỏi không bị lặp lại thứ tự
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function initGame(lang) {
+    config.lang = lang;
+    config.step = 0;
+    // Lấy bộ câu hỏi theo ngôn ngữ và xáo trộn
+    config.currentQuestions = shuffle([...gameData.questions[lang]]);
     
-    <div id="box" class="box-draw">🎁</div>
+    document.getElementById('language-screen').classList.add('hidden');
+    document.getElementById('mode-screen').classList.remove('hidden');
+    document.getElementById('mode-title').innerHTML = lang === 'vi' ? "CHỌN ĐỘ KHÓ <br><small>选择难度</small>" : "选择难度 <br><small>CHỌN ĐỘ KHÓ</small>";
+}
+
+function startQuiz(mode) {
+    config.mode = mode;
+    document.getElementById('mode-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = config.currentQuestions[config.step];
+    const penalty = gameData.modes[config.mode].base + config.step;
     
-    <div id="game-area" class="hidden">
-        <div id="prize-name" class="result"></div>
-        <div id="question-section">
-            <p id="question-text"><strong>Câu hỏi:</strong> Đang tải...</p>
-            <input type="text" id="answer-input" placeholder="Nhập câu trả lời...">
-            <button onclick="checkAnswer()">Xác nhận</button>
-        </div>
-        <p id="feedback"></p>
-    </div>
-
-    <button id="reset-btn" class="hidden" onclick="resetGame()">Chơi lại</button>
-</div>
-
-<script>
-    const data = [
-        { prize: "Một ly bia", q: "Con gì chân ngắn mà lại có cánh?", a: "con vịt" },
-        { prize: " Voucher 50k", q: "Thủ đô của Việt Nam là gì?", a: "hà nội" },
-        { prize: "Tràng pháo tay", q: "1 + 1 bằng mấy?", a: "2" },
-        { prize: "Hát một bài", q: "Cái gì đen khi sạch, trắng khi bẩn?", a: "cái bảng" }
-    ];
-
-    let currentMatch = null;
-
-    const box = document.getElementById('box');
-    const gameArea = document.getElementById('game-area');
-    const prizeName = document.getElementById('prize-name');
-    const questionText = document.getElementById('question-text');
-    const feedback = document.getElementById('feedback');
-
-    box.addEventListener('click', () => {
-        if (!gameArea.classList.contains('hidden')) return;
-
-        // Hiệu ứng "đang bốc"
-        box.innerText = "⏳";
-        
-        setTimeout(() => {
-            currentMatch = data[Math.floor(Math.random() * data.length)];
-            box.innerText = "✨";
-            prizeName.innerText = "Phần thưởng tiềm năng: " + currentMatch.prize;
-            questionText.innerText = "Câu hỏi: " + currentMatch.q;
-            gameArea.classList.remove('hidden');
-        }, 800);
+    document.getElementById('step-counter').innerText = `Câu ${config.step + 1}/${config.currentQuestions.length}`;
+    document.getElementById('penalty-text').innerText = config.lang === 'vi' ? `PHẠT: ${penalty} CHÉN / 惩罚: ${penalty} 杯` : `惩罚: ${penalty} 杯 / PHẠT: ${penalty} CHÉN`;
+    document.getElementById('question-text').innerHTML = `${q.q}<br><small>${q.q2}</small>`;
+    
+    const btns = document.querySelectorAll('.option');
+    q.options.forEach((opt, i) => {
+        btns[i].innerText = opt;
+        btns[i].style.display = "block"; // Reset hiển thị
     });
+}
 
-    function checkAnswer() {
-        const userAnswer = document.getElementById('answer-input').value.toLowerCase().trim();
-        if (userAnswer === currentMatch.a) {
-            feedback.innerText = "✅ Chính xác! Bạn đã nhận được " + currentMatch.prize;
-            feedback.style.color = "green";
+function selectAnswer(i) {
+    const correctAnswer = config.currentQuestions[config.step].a;
+    if (i === correctAnswer) {
+        if (config.step >= config.currentQuestions.length - 1) {
+            showEnd(true);
         } else {
-            feedback.innerText = "❌ Sai rồi! Chúc bạn may mắn lần sau.";
-            feedback.style.color = "red";
+            config.step++;
+            showQuestion();
         }
-        document.getElementById('question-section').classList.add('hidden');
-        document.getElementById('reset-btn').classList.remove('hidden');
+    } else {
+        showEnd(false);
     }
+}
 
-    function resetGame() {
-        location.reload();
+function showEnd(win) {
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    const p = gameData.modes[config.mode].base + config.step;
+    
+    if (win) {
+        document.getElementById('result-title').innerHTML = "🏆 CHIẾN THẮNG / 胜利";
+        document.getElementById('result-desc').innerHTML = "BẠN LÀ THÁNH TỬU!<br>MỌI NGƯỜI PHẢI UỐNG CHÚC MỪNG BẠN!";
+    } else {
+        document.getElementById('result-title').innerHTML = "💀 PHẠT / 惩罚";
+        document.getElementById('result-desc').innerHTML = `SAI RỒI! UỐNG ${p} CHÉN!<br>请喝 ${p} 杯酒！`;
     }
-</script>
+}
 
-</body>
-</html>
+function resetGame() {
+    location.reload();
+}
