@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Mini Game - Bốc Thăm May Mắn</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 400px;
+        }
+        h1 { color: #2d3436; }
+        .box-draw {
+            font-size: 50px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .box-draw:hover { transform: scale(1.1); }
+        button {
+            background-color: #0984e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #74b9ff; }
+        #game-area { margin-top: 20px; }
+        .hidden { display: none; }
+        .result { font-weight: bold; color: #d63031; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎉 Party Game!</h1>
+    <p>Nhấn vào hộp quà để bắt đầu</p>
+    
+    <div id="box" class="box-draw">🎁</div>
+    
+    <div id="game-area" class="hidden">
+        <div id="prize-name" class="result"></div>
+        <div id="question-section">
+            <p id="question-text"><strong>Câu hỏi:</strong> Đang tải...</p>
+            <input type="text" id="answer-input" placeholder="Nhập câu trả lời...">
+            <button onclick="checkAnswer()">Xác nhận</button>
+        </div>
+        <p id="feedback"></p>
+    </div>
+
+    <button id="reset-btn" class="hidden" onclick="resetGame()">Chơi lại</button>
+</div>
+
+<script>
+    const data = [
+        { prize: "Một ly bia", q: "Con gì chân ngắn mà lại có cánh?", a: "con vịt" },
+        { prize: " Voucher 50k", q: "Thủ đô của Việt Nam là gì?", a: "hà nội" },
+        { prize: "Tràng pháo tay", q: "1 + 1 bằng mấy?", a: "2" },
+        { prize: "Hát một bài", q: "Cái gì đen khi sạch, trắng khi bẩn?", a: "cái bảng" }
+    ];
+
+    let currentMatch = null;
+
+    const box = document.getElementById('box');
+    const gameArea = document.getElementById('game-area');
+    const prizeName = document.getElementById('prize-name');
+    const questionText = document.getElementById('question-text');
+    const feedback = document.getElementById('feedback');
+
+    box.addEventListener('click', () => {
+        if (!gameArea.classList.contains('hidden')) return;
+
+        // Hiệu ứng "đang bốc"
+        box.innerText = "⏳";
+        
+        setTimeout(() => {
+            currentMatch = data[Math.floor(Math.random() * data.length)];
+            box.innerText = "✨";
+            prizeName.innerText = "Phần thưởng tiềm năng: " + currentMatch.prize;
+            questionText.innerText = "Câu hỏi: " + currentMatch.q;
+            gameArea.classList.remove('hidden');
+        }, 800);
+    });
+
+    function checkAnswer() {
+        const userAnswer = document.getElementById('answer-input').value.toLowerCase().trim();
+        if (userAnswer === currentMatch.a) {
+            feedback.innerText = "✅ Chính xác! Bạn đã nhận được " + currentMatch.prize;
+            feedback.style.color = "green";
+        } else {
+            feedback.innerText = "❌ Sai rồi! Chúc bạn may mắn lần sau.";
+            feedback.style.color = "red";
+        }
+        document.getElementById('question-section').classList.add('hidden');
+        document.getElementById('reset-btn').classList.remove('hidden');
+    }
+
+    function resetGame() {
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
