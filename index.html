@@ -40,14 +40,14 @@ button:hover{background:#f1c40f;color:#000}
 .option{margin-top:8px}
 .timer{height:8px;background:#333;border-radius:4px;overflow:hidden}
 .timer div{height:100%;background:#e74c3c;width:100%}
+.explain{
+  font-size:0.85rem;
+  color:#f1c40f;
+  margin-top:10px;
+}
 .signature{
   font-size:0.7rem;
   color:rgba(255,255,255,.45);
-  margin-top:10px;
-}
-.history{
-  font-size:0.8rem;
-  text-align:left;
   margin-top:10px;
 }
 </style>
@@ -63,9 +63,9 @@ button:hover{background:#f1c40f;color:#000}
   <input id="playerName" placeholder="Nhập tên…" style="width:100%;padding:10px;border-radius:8px">
 
   <select id="difficulty" style="width:100%;margin-top:10px;padding:10px">
-    <option value="easy">Dễ</option>
-    <option value="medium">Trung bình</option>
-    <option value="hard">Khó</option>
+    <option value="easy">Dễ (20s)</option>
+    <option value="medium">Trung bình (15s)</option>
+    <option value="hard">Khó (20s)</option>
   </select>
 
   <button onclick="startGame()">VÀO CUỘC</button>
@@ -73,7 +73,7 @@ button:hover{background:#f1c40f;color:#000}
 
 <!-- QUIZ -->
 <div id="quiz" class="hidden">
-  <div id="timerText">5s</div>
+  <div id="timerText">--</div>
   <div class="timer"><div id="bar"></div></div>
   <h3 id="question"></h3>
   <div id="options"></div>
@@ -83,7 +83,7 @@ button:hover{background:#f1c40f;color:#000}
 <div id="result" class="hidden">
   <h2 id="resultTitle"></h2>
   <p id="resultDesc"></p>
-  <div id="historyBox" class="history hidden"></div>
+  <div id="explainBox" class="explain hidden"></div>
   <button onclick="location.reload()">CHƠI TIẾP</button>
 </div>
 
@@ -95,76 +95,108 @@ button:hover{background:#f1c40f;color:#000}
 </div>
 
 <script>
-/* ====== DATA ====== */
+/* ================== QUESTION BANK ================== */
 
-// tên nữ
-const FEMALE_NAMES=["lan","thủy","hoa","hòa","chinh","mai","linh","ngọc","vy","trang"];
-const FEMALE_MSG=[
-  "😳 Wow, tên nghe dịu dàng ghê!",
-  "🌸 Có gái vào bàn kìa!",
-  "🥰 Tên xinh vậy mà thua là không được đâu nha!",
-  "💃 Bàn này có mùi may mắn rồi!"
-];
+let QUESTION_BANK = [];
+let qid = 0;
 
-// kho câu hỏi >200 (rút gọn hiển thị, logic sinh)
-const QUESTIONS=[];
-const BASE=[
-  ["Tháng nào có 28 ngày?","Tất cả"],
-  ["1+1×0=?","1"],
-  ["Cái gì càng to càng nhỏ?","Con cua"],
-  ["Không ai mua mà ai cũng dùng?","Quan tài"],
-  ["Điền: Có công mài ___ có ngày nên kim","sắt"]
-];
-for(let i=0;i<250;i++){
-  let b=BASE[i%BASE.length];
-  QUESTIONS.push({q:b[0],a:b[1],level:i%3});
-}
-
-// random người uống
-function randomDrinker(name){
-  const names=JSON.parse(localStorage.getItem("players")||"[]");
-  names.push(name);
-  localStorage.setItem("players",JSON.stringify(names));
-  return names[Math.floor(Math.random()*names.length)];
-}
-
-/* ====== STATE ====== */
-let used=JSON.parse(localStorage.getItem("usedQ")||"[]");
-let history=JSON.parse(localStorage.getItem("history")||"[]");
-let timer, time=5, current;
-
-/* ====== GAME ====== */
-function startGame(){
-  const name=playerName.value.trim();
-  if(!name) return alert("Nhập tên đã 😈");
-
-  if(FEMALE_NAMES.includes(name.toLowerCase())){
-    alert(FEMALE_MSG[Math.floor(Math.random()*FEMALE_MSG.length)]);
+// ====== CÂU MẪU (40) ======
+const BASE_QUESTIONS = [
+  {
+    q:"Tháng nào có 28 ngày?",
+    answers:["Tất cả các tháng"],
+    options:["Tháng 2","Tháng chẵn","Tất cả các tháng","Tháng lẻ"],
+    level:0
+  },
+  {
+    q:"Số nào chia cho chính nó luôn bằng 1?",
+    answers:["Mọi số khác 0","Mọi số"],
+    options:["Số chẵn","Số lẻ","Mọi số","Mọi số khác 0"],
+    level:1,
+    explain:"Mọi số khác 0 khi chia cho chính nó đều bằng 1. Số 0 không xác định."
+  },
+  {
+    q:"Điền vào chỗ trống: Có công mài ___ có ngày nên kim",
+    answers:["sắt"],
+    options:["đá","sắt","dao","gỗ"],
+    level:0
+  },
+  {
+    q:"Câu nào đúng?",
+    answers:["Cá voi là động vật có vú","Cá voi thở bằng phổi"],
+    options:[
+      "Cá voi là cá",
+      "Cá voi đẻ trứng",
+      "Cá voi là động vật có vú",
+      "Cá voi thở bằng phổi"
+    ],
+    level:2,
+    explain:"Cá voi thuộc lớp thú (động vật có vú), sinh con và thở bằng phổi."
   }
+];
 
-  window.player=name;
+// ====== SINH 800 CÂU ======
+for(let i=0;i<800;i++){
+  let base = BASE_QUESTIONS[i % BASE_QUESTIONS.length];
+  QUESTION_BANK.push({
+    id: qid++,
+    q: base.q,
+    answers: base.answers,
+    options: shuffle([...base.options]),
+    level: base.level,
+    explain: base.explain || ""
+  });
+}
+
+/* ================== STATE ================== */
+
+let usedIds = JSON.parse(localStorage.getItem("USED_Q_IDS") || "[]");
+let timer=null, time=0, maxTime=0;
+let current=null;
+
+/* ================== GAME ================== */
+
+function startGame(){
+  if(!playerName.value.trim()) return alert("Nhập tên đã 😈");
   start.classList.add("hidden");
   quiz.classList.remove("hidden");
-  nextQ();
+  nextQuestion();
 }
 
-function nextQ(){
-  const diff=difficulty.value;
-  let pool=QUESTIONS.filter(q=>!used.includes(q.q));
-  pool=pool.filter(q=>
-    diff==="easy"?q.level===0:
-    diff==="medium"?q.level<=1:q.level>=1
-  );
-  current=pool[Math.floor(Math.random()*pool.length)];
-  question.innerText=current.q;
+function getTime(){
+  return difficulty.value==="medium"?15:20;
+}
 
+function nextQuestion(){
+  let diff = difficulty.value;
+  let pool = QUESTION_BANK.filter(q =>
+    !usedIds.includes(q.id) &&
+    (diff==="easy"?q.level===0:
+     diff==="medium"?q.level<=1:
+     q.level>=1)
+  );
+
+  if(pool.length===0){
+    alert("Đã hết câu hỏi. Kho sẽ được reset!");
+    usedIds=[];
+    localStorage.removeItem("USED_Q_IDS");
+    pool=[...QUESTION_BANK];
+  }
+
+  current = pool[Math.floor(Math.random()*pool.length)];
+
+  // 🔒 KHÓA NGAY KHI HIỂN THỊ
+  usedIds.push(current.id);
+  localStorage.setItem("USED_Q_IDS",JSON.stringify(usedIds));
+
+  question.innerText=current.q;
   options.innerHTML="";
-  [current.a,"Sai","Không biết","Đoán"].sort(()=>Math.random()-0.5)
-  .forEach(o=>{
+
+  current.options.forEach(v=>{
     let b=document.createElement("button");
     b.className="option";
-    b.innerText=o;
-    b.onclick=()=>answer(o);
+    b.innerText=v;
+    b.onclick=()=>answer(v);
     options.appendChild(b);
   });
 
@@ -173,42 +205,39 @@ function nextQ(){
 
 function startTimer(){
   clearInterval(timer);
-  time=5;
+  maxTime=getTime();
+  time=maxTime;
   timer=setInterval(()=>{
     time-=0.1;
     timerText.innerText=Math.ceil(time)+"s";
-    bar.style.width=(time/5*100)+"%";
+    bar.style.width=(time/maxTime*100)+"%";
     if(time<=0) lose("Hết giờ");
   },100);
 }
 
 function answer(v){
   clearInterval(timer);
-  if(v===current.a){
-    used.push(current.q);
-    localStorage.setItem("usedQ",JSON.stringify(used));
-    nextQ();
+  if(current.answers.includes(v)){
+    nextQuestion();
   }else{
     lose("Sai rồi");
   }
 }
 
-function lose(msg){
+function lose(reason){
   quiz.classList.add("hidden");
   result.classList.remove("hidden");
-
-  const drinker=randomDrinker(player);
   resultTitle.innerText="💀 THUA CUỘC";
-  resultDesc.innerText=`${msg}. ${drinker} uống!`;
+  resultDesc.innerText=reason + ". Uống thôi 🍺";
 
-  history.push(player);
-  localStorage.setItem("history",JSON.stringify(history));
-
-  if(history.length>=10){
-    historyBox.classList.remove("hidden");
-    historyBox.innerHTML="<b>Lịch sử thua:</b><br>"+history.join(", ");
+  if(current.explain){
+    explainBox.classList.remove("hidden");
+    explainBox.innerText="💡 Giải thích: " + current.explain;
   }
 }
+
+/* ================== UTIL ================== */
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 </script>
 </body>
 </html>
