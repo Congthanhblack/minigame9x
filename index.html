@@ -1,190 +1,344 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai Là Thánh Nhọ Pro - Ultra Countdown Edition</title>
-    <style>
-        :root { --gold: #f1c40f; --blue: #0984e3; --red: #d63031; --dark: #020230; --green: #2ecc71; }
-        body { margin: 0; background: radial-gradient(circle, #0a3d62, #020230); font-family: 'Segoe UI', Tahoma, sans-serif; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; touch-action: manipulation; }
-        .main-game { width: 95%; max-width: 500px; background: rgba(0, 0, 0, 0.95); padding: 25px; border: 3px solid var(--gold); border-radius: 25px; text-align: center; box-shadow: 0 0 50px rgba(241, 196, 15, 0.2); position: relative; }
-        .nct-host { font-style: italic; color: var(--gold); margin-bottom: 10px; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; }
-        
-        /* Đồng hồ đếm ngược */
-        .timer-container { width: 100%; height: 10px; background: #333; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--green), var(--red)); transition: width 0.1s linear; }
-        #timer-text { font-size: 1.5rem; font-weight: bold; color: var(--red); margin-bottom: 10px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI LÀ THÁNH NHỌ – PARTY</title>
 
-        .btn-action { background: transparent; border: 2px solid var(--gold); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.3s; width: 100%; margin-top: 10px; }
-        .btn-action:hover { background: var(--gold); color: black; }
-        .penalty-tag { background: var(--red); padding: 8px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
-        .question-box { margin: 15px 0; min-height: 80px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; }
-        .options-container { position: relative; min-height: 300px; margin-top: 10px; }
-        .option { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--blue); color: white; padding: 12px; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 8px; transition: transform 0.1s ease-out, background 0.2s; font-size: 1rem; display: block; box-sizing: border-box; }
-        .option.evasive { position: absolute; width: 100%; z-index: 10; }
-        .hidden { display: none; }
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-8px); } 100% { transform: translateX(0); } }
-        #troll-msg { color: #ff7675; font-weight: bold; margin: 15px 0; font-size: 1.1rem; line-height: 1.4; }
-    </style>
+<style>
+:root {
+  --gold:#f1c40f;
+  --red:#e74c3c;
+  --blue:#0984e3;
+  --dark:#020230;
+}
+
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle, #0a3d62, var(--dark));
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.app {
+  width:95%;
+  max-width:520px;
+  background:#000;
+  border:3px solid var(--gold);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 0 30px rgba(241,196,15,.25);
+}
+
+h1,h2,h3 { text-align:center; color:var(--gold); }
+
+input, select, button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  font-size:1rem;
+  box-sizing:border-box;
+}
+
+input, select {
+  border:none;
+}
+
+button {
+  background:transparent;
+  border:2px solid var(--gold);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover {
+  background:var(--gold);
+  color:#000;
+}
+
+.hidden { display:none; }
+
+.timer {
+  font-size:2.2rem;
+  color:var(--red);
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.option {
+  margin-top:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid var(--blue);
+}
+
+.rank {
+  background:rgba(255,255,255,.06);
+  padding:8px;
+  border-radius:8px;
+  margin-top:6px;
+  font-size:.95rem;
+}
+</style>
 </head>
+
 <body>
-    <div class="main-game" id="game-container">
-        <div id="scr-start">
-            <h1 style="color: var(--gold); margin-bottom: 0;">🍺 AI LÀ THÁNH NHỌ 🍺</h1>
-            <p style="color: #888; margin-top: 5px;">Hết 15 giây là PHẠT!</p>
-            <div class="nct-host">"15 giây cho mỗi câu. Quá chậm là uống!"</div>
-            <button class="btn-action" onclick="startGame()">VÀO CUỘC 🚀</button>
-        </div>
+<div class="app">
 
-        <div id="scr-quiz" class="hidden">
-            <div id="timer-text">15s</div>
-            <div class="timer-container"><div id="timer-bar"></div></div>
-            <div id="penalty-text" class="penalty-tag"></div>
-            <div class="nct-host" id="quiz-msg">"Nhanh tay lên nào!"</div>
-            <div class="question-box"><h2 id="q-text"></h2></div>
-            <div id="options-box" class="options-container"></div>
-        </div>
+<!-- ========== START SCREEN ========== -->
+<div id="scr-start">
+  <h1>🍺 AI LÀ THÁNH NHỌ 🍺</h1>
 
-        <div id="scr-res" class="hidden">
-            <h1 id="res-title"></h1>
-            <div style="font-size: 5rem;" id="res-icon"></div>
-            <p id="res-desc" style="font-weight: bold; color: var(--gold);"></p>
-            <div id="troll-msg"></div>
-            <div class="nct-host" id="res-nct"></div>
-            <button class="btn-action" onclick="location.reload()">BẮT ĐẦU LẠI 🔄</button>
-        </div>
-    </div>
+  <input id="playerName" placeholder="Nhập tên người chơi">
 
-    <script>
-        const WRONG_MSGS = ["🤡 Chậm như rùa!", "🤨 Suy nghĩ lâu thế?", "🍺 Rót rượu đi, hết giờ rồi!", "🌚 Gà mờ quá bạn ơi!"];
-        const CORRECT_MSGS = ["🔥 Quá nhanh quá nguy hiểm!", "⚡ Phản xạ tuyệt vời!", "💎 Cứ thế mà phát huy!", "👏 Đỉnh của chóp!"];
+  <select id="difficulty">
+    <option value="easy">😌 Dễ</option>
+    <option value="medium">😐 Trung bình</option>
+    <option value="hard">😈 Khó</option>
+  </select>
 
-        const ALL_QUESTIONS = [];
-        const RAW_DATA = [
-            {q: "Núi nào bị chặt ra từng khúc?", o: ["Thái Sơn", "Ngũ Hành", "Núi Đèo", "Fansipan"], a: 2},
-            {q: "Tháng nào có 28 ngày?", o: ["Tháng 2", "Tháng Nhuận", "Tất cả các tháng", "Tháng 12"], a: 2},
-            {q: "Cái gì đen khi sạch, trắng khi bẩn?", o: ["Than", "Bảng đen", "Mực", "Tóc"], a: 1},
-            {q: "Bệnh gì bác sĩ bó tay?", o: ["Gãy tay", "Đau đầu", "Sổ mũi", "Huyết áp"], a: 0},
-            {q: "Lịch nào dài nhất?", o: ["Lịch sử", "Vạn niên", "Lịch gỗ", "Lịch âm"], a: 0},
-            {q: "Quần gì rộng nhất?", o: ["Quần bò", "Quần đảo", "Quần đùi", "Quần thụng"], a: 1},
-            {q: "Con gì càng to càng nhỏ?", o: ["Con voi", "Con cua", "Con kiến", "Con rùa"], a: 1}
-        ];
+  <select id="gameType">
+    <option value="normal">🎯 Bình thường</option>
+    <option value="sudden">💀 1 câu là chết</option>
+  </select>
 
-        for(let i=0; i<160; i++) {
-            let t = RAW_DATA[i % RAW_DATA.length];
-            ALL_QUESTIONS.push({ id: i, q: t.q, o: [...t.o], a: t.a });
-        }
+  <button onclick="startGame()">VÀO CUỘC 🚀</button>
 
-        const NCT_TRICK = { 
-            id: 999, 
-            q: "NCT có đẹp trai không?", 
-            o: ["Không đẹp", "Không biết", "Đẹp trai nhất vịnh bắc bộ", "Xấu trai"], 
-            a: 2, 
-            isTrick: true 
-        };
+  <div id="historyBox"></div>
+</div>
 
-        let state = { step: 0, currentList: [], limit: 15, timeLeft: 15, timer: null };
+<!-- ========== QUIZ SCREEN ========== -->
+<div id="scr-quiz" class="hidden">
+  <div class="timer" id="timer"></div>
+  <h2 id="question"></h2>
+  <div id="options"></div>
+</div>
 
-        function startGame() {
-            let usedIds = JSON.parse(sessionStorage.getItem('nct_v7_used') || '[]');
-            let pool = ALL_QUESTIONS.filter(q => !usedIds.includes(q.id)).sort(() => Math.random() - 0.5);
-            if (pool.length < 15) { usedIds = []; pool = ALL_QUESTIONS.sort(() => Math.random() - 0.5); }
+<!-- ========== RESULT SCREEN ========== -->
+<div id="scr-result" class="hidden">
+  <h1 id="resTitle"></h1>
+  <p id="resDesc" style="text-align:center;font-weight:bold;"></p>
+  <button onclick="location.reload()">Chơi tiếp 🔄</button>
+</div>
 
-            state.currentList = pool.slice(0, 14);
-            state.currentList.splice(Math.floor(Math.random() * 4) + 2, 0, NCT_TRICK);
-            sessionStorage.setItem('nct_v7_used', JSON.stringify([...usedIds, ...state.currentList.map(q => q.id)]));
-            
-            document.getElementById('scr-start').classList.add('hidden');
-            document.getElementById('scr-quiz').classList.remove('hidden');
-            renderQ();
-        }
+</div>
 
-        function startTimer() {
-            clearInterval(state.timer);
-            state.timeLeft = 15;
-            const bar = document.getElementById('timer-bar');
-            const text = document.getElementById('timer-text');
-            
-            state.timer = setInterval(() => {
-                state.timeLeft -= 0.1;
-                text.innerText = Math.ceil(state.timeLeft) + "s";
-                bar.style.width = (state.timeLeft / 15 * 100) + "%";
+<script>
+/* ======================================================
+   GLOBAL DATA & STATE
+====================================================== */
 
-                if (state.timeLeft <= 0) {
-                    clearInterval(state.timer);
-                    showResult(false, "Hết giờ rồi, chậm như rùa!");
-                }
-            }, 100);
-        }
+const SETTINGS = {
+  easy:   { time:18, drink:1 },
+  medium: { time:15, drink:2 },
+  hard:   { time:10, drink:3 }
+};
 
-        function renderQ() {
-            if (state.step >= state.limit) { showResult(true); return; }
-            startTimer();
-            let q = state.currentList[state.step];
-            document.getElementById('penalty-text').innerText = `CÂU ${state.step + 1} / ${state.limit}`;
-            document.getElementById('q-text').innerText = q.q;
-            
-            const box = document.getElementById('options-box');
-            box.innerHTML = '';
-            
-            q.o.forEach((opt, i) => {
-                let btn = document.createElement('button');
-                btn.className = 'option';
-                btn.innerText = opt;
-                
-                if (q.isTrick) {
-                    if (i !== q.a) {
-                        btn.classList.add('evasive');
-                        btn.style.top = (i * 65) + "px";
-                        btn.onmouseover = btn.ontouchstart = (e) => { e.preventDefault(); moveButton(btn); };
-                    } else {
-                        btn.style.marginTop = "260px";
-                    }
-                }
+let state = {
+  player:"",
+  level:"",
+  gameType:"",
+  step:0,
+  timer:null,
+  timeLeft:0,
+  questions:[]
+};
 
-                btn.onclick = () => {
-                    clearInterval(state.timer);
-                    if (i === q.a) {
-                        btn.style.background = "var(--green)";
-                        document.getElementById('quiz-msg').innerText = "NCT: " + CORRECT_MSGS[Math.floor(Math.random()*CORRECT_MSGS.length)];
-                        setTimeout(() => { state.step++; renderQ(); }, 600);
-                    } else {
-                        showResult(false);
-                    }
-                };
-                box.appendChild(btn);
-            });
-        }
+/* ======================================================
+   PARTY PLAYERS & HISTORY
+====================================================== */
 
-        function moveButton(btn) {
-            let randomX = (Math.random() - 0.5) * 300;
-            let randomY = (Math.random() - 0.5) * 100;
-            btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
-        }
+let partyPlayers =
+  JSON.parse(localStorage.getItem("party_players") || "[]");
 
-        function showResult(isWin, customMsg) {
-            clearInterval(state.timer);
-            document.getElementById('scr-quiz').classList.add('hidden');
-            document.getElementById('scr-res').classList.remove('hidden');
-            const troll = document.getElementById('troll-msg');
-            const container = document.getElementById('game-container');
-            
-            if (isWin) {
-                document.getElementById('res-title').innerText = "THẮNG CUỘC!";
-                document.getElementById('res-icon').innerText = "🤴";
-                document.getElementById('res-desc').innerText = "Quá bản lĩnh!";
-            } else {
-                container.classList.add('shake');
-                document.getElementById('res-title').innerText = "THUA CUỘC!";
-                document.getElementById('res-icon').innerText = "🤮";
-                document.getElementById('res-desc').innerText = customMsg || `Dừng bước ở câu ${state.step + 1}`;
-                if (state.step < 7) {
-                    troll.innerText = "Úi dời bạn còn không thông minh hơn học sinh lớp 5 hihi.....";
-                }
-                document.getElementById('res-nct').innerText = "NCT: " + WRONG_MSGS[Math.floor(Math.random()*WRONG_MSGS.length)];
-            }
-        }
-    </script>
+let history =
+  JSON.parse(localStorage.getItem("nct_history") || "[]");
+
+/* ======================================================
+   AI QUESTION GENERATOR
+====================================================== */
+
+function generateAIQuestion() {
+  const names = partyPlayers.length
+    ? partyPlayers
+    : ["Đứa bên trái","Đứa bên phải","Chủ bàn","Người cầm ly"];
+
+  const traps = [
+    "là người nhọ nhất bàn",
+    "uống nhiều nhất tối nay",
+    "say đầu tiên",
+    "hay bốc phét nhất",
+    "về sớm nhất"
+  ];
+
+  let target = names[Math.floor(Math.random()*names.length)];
+  let trap = traps[Math.floor(Math.random()*traps.length)];
+
+  return {
+    q: `${target} có phải là ${trap} không?`,
+    o: ["Đúng 😈","Không 🤔","Không dám trả lời 😵"],
+    a: 0
+  };
+}
+
+/* ======================================================
+   GAME START
+====================================================== */
+
+function startGame() {
+  const name = document.getElementById("playerName").value.trim();
+  if(!name) {
+    alert("Nhập tên đã 😈");
+    return;
+  }
+
+  state.player = name;
+  state.level = document.getElementById("difficulty").value;
+  state.gameType = document.getElementById("gameType").value;
+  state.step = 0;
+  state.questions = [];
+
+  if (!partyPlayers.includes(name)) {
+    partyPlayers.push(name);
+    localStorage.setItem("party_players", JSON.stringify(partyPlayers));
+  }
+
+  document.getElementById("scr-start").classList.add("hidden");
+  document.getElementById("scr-quiz").classList.remove("hidden");
+
+  nextQuestion();
+}
+
+/* ======================================================
+   QUIZ FLOW
+====================================================== */
+
+function nextQuestion() {
+  if (state.gameType === "sudden" && state.step >= 1) {
+    endGame(true);
+    return;
+  }
+
+  state.questions[state.step] = generateAIQuestion();
+  renderQuestion(state.questions[state.step]);
+  startTimer();
+}
+
+function renderQuestion(q) {
+  document.getElementById("question").innerText = q.q;
+  const box = document.getElementById("options");
+  box.innerHTML = "";
+
+  q.o.forEach((opt,i)=>{
+    let btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerText = opt;
+    btn.onclick = ()=>answer(i===q.a);
+    box.appendChild(btn);
+  });
+}
+
+/* ======================================================
+   TIMER
+====================================================== */
+
+function startTimer() {
+  clearInterval(state.timer);
+  state.timeLeft = SETTINGS[state.level].time;
+  document.getElementById("timer").innerText = state.timeLeft+"s";
+
+  state.timer = setInterval(()=>{
+    state.timeLeft--;
+    document.getElementById("timer").innerText = state.timeLeft+"s";
+    if (state.timeLeft <= 0) {
+      answer(false);
+    }
+  },1000);
+}
+
+/* ======================================================
+   ANSWER & RESULT
+====================================================== */
+
+function answer(correct) {
+  clearInterval(state.timer);
+
+  if (correct && state.gameType !== "sudden") {
+    state.step++;
+    nextQuestion();
+  } else {
+    endGame(correct);
+  }
+}
+
+function endGame(win) {
+  document.getElementById("scr-quiz").classList.add("hidden");
+  document.getElementById("scr-result").classList.remove("hidden");
+
+  let drinkTarget = getDrinkTarget();
+  let drinkCount = SETTINGS[state.level].drink;
+
+  if (!win) {
+    history.push({
+      name: state.player,
+      level: state.level,
+      mode: state.gameType,
+      time: new Date().toLocaleTimeString()
+    });
+    localStorage.setItem("nct_history", JSON.stringify(history));
+  }
+
+  document.getElementById("resTitle").innerText =
+    win ? "🤴 THOÁT NẠN!" : "🤮 NHỌ RỒI!";
+
+  document.getElementById("resDesc").innerText =
+    win
+      ? "Cả bàn vỗ tay 👏"
+      : drinkTarget === state.player
+        ? `🍺 ${state.player} uống ${drinkCount} ngụm!`
+        : `🍀 ${drinkTarget} uống thay ${state.player} ${drinkCount} ngụm!`;
+
+  renderHistory();
+}
+
+/* ======================================================
+   DRINK LOGIC
+====================================================== */
+
+function getDrinkTarget() {
+  if (partyPlayers.length < 2) return state.player;
+
+  if (Math.random() < 0.3) {
+    let others = partyPlayers.filter(p=>p!==state.player);
+    return others[Math.floor(Math.random()*others.length)];
+  }
+  return state.player;
+}
+
+/* ======================================================
+   HISTORY (>=10 PLAYERS)
+====================================================== */
+
+function renderHistory() {
+  if (partyPlayers.length < 10) return;
+
+  const box = document.getElementById("historyBox");
+  box.innerHTML = "<h3>📜 LỊCH SỬ NHỌ</h3>";
+
+  history.slice(-10).reverse().forEach(h=>{
+    box.innerHTML += `
+      <div class="rank">
+        🤮 ${h.name} | ${h.mode} | ${h.level} | ${h.time}
+      </div>`;
+  });
+}
+
+renderHistory();
+</script>
 </body>
 </html>
