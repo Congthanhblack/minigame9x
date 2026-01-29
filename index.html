@@ -5,251 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ai Là Thánh Nhọ - Host by NCT</title>
     <style>
-        :root {
-            --gold: #f1c40f;
-            --blue: #0984e3;
-            --red: #d63031;
-            --dark: #020230;
-        }
-
-        body {
-            margin: 0;
-            background: radial-gradient(circle, #0a3d62, #020230);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .main-game {
-            width: 90%;
-            max-width: 450px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border: 3px solid var(--gold);
-            border-radius: 25px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(241, 196, 15, 0.3);
-        }
-
-        .nct-host {
-            font-style: italic;
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-
-        .grid-layout {
-            display: grid;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .btn-action {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .btn-action:hover {
-            background: var(--gold);
-            color: black;
-            transform: scale(1.05);
-        }
-
-        .penalty-tag {
-            background: var(--red);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .question-box {
-            margin: 20px 0;
-            min-height: 130px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .option {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--blue);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: 0.2s;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .option:hover {
-            background: var(--blue);
-        }
-
+        :root { --gold: #f1c40f; --blue: #0984e3; --red: #d63031; --dark: #020230; }
+        body { margin: 0; background: radial-gradient(circle, #0a3d62, #020230); font-family: sans-serif; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .main-game { width: 90%; max-width: 480px; background: rgba(0,0,0,0.95); padding: 30px; border: 3px solid var(--gold); border-radius: 25px; text-align: center; box-shadow: 0 0 50px rgba(241,196,15,0.4); }
+        .nct-host { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
+        .pinyin { display: block; font-size: 0.8rem; color: #aaa; font-style: normal; margin-top: 2px; }
+        .grid-layout { display: grid; gap: 15px; margin-top: 25px; }
+        .btn-action { background: transparent; border: 2px solid var(--gold); color: white; padding: 15px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-action:hover { background: var(--gold); color: black; }
+        .penalty-tag { background: var(--red); padding: 10px 20px; border-radius: 20px; font-weight: bold; display: inline-block; }
+        .question-box { margin: 25px 0; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 1px solid #333; }
+        .option { background: rgba(255,255,255,0.05); border: 1px solid var(--blue); color: white; padding: 15px; border-radius: 12px; cursor: pointer; text-align: left; width: 100%; margin-bottom: 10px; }
         .hidden { display: none; }
-        small { display: block; font-size: 0.8rem; opacity: 0.7; margin-top: 5px; }
-        #step-counter { font-size: 0.9rem; color: var(--gold); margin-top: 10px; }
     </style>
 </head>
 <body>
-
     <div class="main-game">
         <div id="language-screen">
-            <h1 style="margin-bottom: 5px;">🍺 AI LÀ THÁNH NHỌ 🍺</h1>
+            <h1>🍺 AI LÀ THÁNH NHỌ 🍺</h1>
             <div class="nct-host">"Chào mừng đến với chương trình. <br>Tôi là NCT dẫn chương trình."</div>
-            <p>Chọn ngôn ngữ để bắt đầu cuộc chơi:<br><small>请选择您的语言</small></p>
             <div class="grid-layout">
                 <button class="btn-action" onclick="initGame('vi')">Tiếng Việt 🇻🇳</button>
-                <button class="btn-action" onclick="initGame('zh')">中文 🇨🇳</button>
+                <button class="btn-action" onclick="initGame('zh')">中文 (简体) 🇨🇳</button>
             </div>
         </div>
-
         <div id="mode-screen" class="hidden">
-            <div class="nct-host">"NCT: Hãy chọn mức độ chịu chơi của bạn!"</div>
+            <div class="nct-host" id="mode-nct"></div>
             <div class="grid-layout">
-                <button class="btn-action" onclick="startQuiz('easy')">DỄ / 简单<br><small>Nhấp môi làm quen</small></button>
-                <button class="btn-action" onclick="startQuiz('medium')">VỪA / 中等<br><small>Bắt đầu thấy rung lắc</small></button>
-                <button class="btn-action" style="border-color: var(--red); color: var(--red);" onclick="startQuiz('hard')">KHÓ / 困难<br><small>Xác định làm 'Thánh Nhọ'</small></button>
+                <button class="btn-action" onclick="startQuiz('easy')">DỄ / 简单</button>
+                <button class="btn-action" onclick="startQuiz('medium')">VỪA / 中等</button>
+                <button class="btn-action" onclick="startQuiz('hard')" style="color:var(--red)">KHÓ / 困难</button>
             </div>
         </div>
-
         <div id="quiz-screen" class="hidden">
             <div id="penalty-text" class="penalty-tag"></div>
-            <div class="question-box">
-                <h2 id="question-text" style="font-size: 1.2rem;"></h2>
-            </div>
-            <div id="options-container">
+            <div class="question-box"><h2 id="question-text"></h2></div>
+            <div id="options">
                 <button class="option" onclick="selectAnswer(0)"></button>
                 <button class="option" onclick="selectAnswer(1)"></button>
                 <button class="option" onclick="selectAnswer(2)"></button>
                 <button class="option" onclick="selectAnswer(3)"></button>
             </div>
-            <div id="step-counter"></div>
+            <div id="step-counter" style="color:var(--gold); margin-top:10px"></div>
         </div>
-
         <div id="result-screen" class="hidden">
             <h1 id="result-title"></h1>
-            <div style="font-size: 1.2rem; margin: 20px 0;">
-                <p id="result-desc"></p>
-                <div class="nct-host" id="nct-comment"></div>
-            </div>
-            <button class="btn-action" onclick="resetGame()">CHƠI TIẾP / 再来一次</button>
+            <p id="result-desc" style="font-size:1.5rem"></p>
+            <div class="nct-host" id="nct-comment"></div>
+            <button class="btn-action" onclick="location.reload()">CHƠI LẠI</button>
         </div>
     </div>
-
     <script>
-        const gameData = {
-            modes: {
-                easy: { base: 1 },
-                medium: { base: 2 },
-                hard: { base: 5 }
-            },
-            questions: {
-                vi: [
-                    { q: "Con mèo nào cực kỳ sợ chuột?", q2: "哪只猫非常怕老鼠？", options: ["Mèo Tom", "Mèo máy Doraemon", "Mèo Oggy", "Mèo Kitty"], a: 1 },
-                    { q: "Sơn Tùng M-TP quê ở đâu?", q2: "Sơn Tùng M-TP 的家乡在哪里？", options: ["Hà Nội", "Hải Phòng", "Thái Bình", "Nam Định"], a: 2 },
-                    { q: "Quả gì bỏ hạt thì ăn được, bỏ vỏ thì không?", q2: "什么水果去籽能吃，去皮不能吃？", options: ["Dưa hấu", "Bắp (Ngô)", "Sầu riêng", "Thanh long"], a: 1 },
-                    { q: "Tháng nào trong năm có 28 ngày?", q2: "一年中哪个月有28天？", options: ["Tháng 2", "Tháng Chạp", "Tháng nào cũng có", "Tháng nhuận"], a: 2 },
-                    { q: "Linh vật của năm 2024 là con gì?", q2: "2024年的生肖是什么？", options: ["Con Rồng", "Con Hổ", "Con Trâu", "Con Mèo"], a: 0 },
-                    { q: "Nơi nào là 'Thành phố ngàn hoa'?", q2: "哪里被称为万花之城？", options: ["Sapa", "Huế", "Đà Lạt", "Đà Nẵng"], a: 2 },
-                    { q: "Bánh chưng hình vuông tượng trưng cho?", q2: "方形粽子象征着什么？", options: ["Trời", "Đất", "Sự giàu sang", "Gia đình"], a: 1 },
-                    { q: "Nắng 3 năm tôi không bỏ bạn, mưa 1 ngày bạn bỏ tôi là ai?", q2: "晴天在，雨天不在，是什么？", options: ["Cái nón", "Đôi dép", "Cái bóng", "Áo mưa"], a: 2 },
-                    { q: "Trong 12 con giáp VN, con nào khác TQ?", q2: "越南生肖中哪只与中国不同？", options: ["Mèo", "Trâu", "Rồng", "Hổ"], a: 0 },
-                    { q: "Nước mắm làm từ gì là chính?", q2: "鱼露的主要原料？", options: ["Muối", "Cá", "Thịt", "Tôm"], a: 1 }
-                ],
-                zh: [
-                    { q: "‘床前明月光’ 的下一句是？", options: ["低头思故乡", "举头望明月", "疑是地上霜", "花落知多少"], a: 2 },
-                    { q: "中国的国宝动物是什么？", options: ["大熊猫", "金丝猴", "丹顶鹤", "华南虎"], a: 0 },
-                    { q: "火锅最出名的地方是？", options: ["重庆", "上海", "广州", "北京"], a: 0 },
-                    { q: "北京的别称是什么？", options: ["魔都", "帝都", "花城", "羊城"], a: 1 },
-                    { q: "‘三个臭皮匠’ 顶个什么？", options: ["诸葛亮", "关羽", "张飞", "曹操"], a: 0 },
-                    { q: "中国四大发明不包括？", options: ["造纸术", "指南针", "电灯", "火药"], a: 2 },
-                    { q: "春节给小辈的钱叫什么？", options: ["红包/压岁钱", "零用钱", "奖金", "辛苦钱"], a: 0 },
-                    { q: "‘囧’ 这个字代表什么？", options: ["尴尬/无奈", "开心", "愤怒", "富有"], a: 0 },
-                    { q: "西游记中谁最胖？", options: ["孙悟空", "唐僧", "猪八戒", "沙和尚"], a: 2 },
-                    { q: "中国的法定货币是？", options: ["美元", "日元", "人民币", "欧元"], a: 2 }
-                ]
-            }
+        const raw = {
+            vi: [
+                {q:"Con mèo nào sợ chuột?", options:["Tom","Doraemon","Oggy","Kitty"], a:1},
+                {q:"Tháng nào có 28 ngày?", options:["Tháng 2","Tháng 1","Tất cả các tháng","Tháng nhuận"], a:2},
+                {q:"Sở thú cháy con gì chạy ra đầu?", options:["Sư tử","Voi","Con người","Khỉ"], a:2},
+                {q:"Quả gì có mắt không thấy đường?", options:["Quả Dứa","Quả Na","Quả Nhãn","Quả Vải"], a:0},
+                {q:"Xã nào đông dân nhất?", options:["Xã hội","Xã Đàn","Xã huyện","Xã hội đen"], a:0},
+                {q:"Kiến nào không bao giờ ngủ?", options:["Kiến lửa","Kiến thức","Kiến thợ","Kiến đen"], a:1},
+                {q:"Cái gì không đánh mà kêu?", options:["Cái trống","Cái mồm","Cái chuông","Sóng biển"], a:1},
+                {q:"Núi nào bị chặt ra từng khúc?", options:["Thái Sơn","Ngũ Hành","Núi Đèo","Núi xanh"], a:2},
+                {q:"Con gì càng to càng nhỏ?", options:["Con cua","Con ốc","Con cá","Con rùa"], a:0},
+                {q:"Bánh chưng tượng trưng cho?", options:["Trời","Đất","Mây","Nước"], a:1}
+            ],
+            zh: [
+                {q:"‘床前明月光’ 下一句？<span class='pinyin'>'Chuáng qián míngyuè guāng' xià yí jù?</span>", options:["思故乡","望明月","地上霜","知多少"], a:2},
+                {q:"中国的国宝？<span class='pinyin'>Zhōngguó de guóbǎo?</span>", options:["熊猫 (Xióngmāo)","金丝猴","老虎","龙"], a:0},
+                {q:"哪种水果是果中之王？<span class='pinyin'>Guǒ zhōng zhī wáng?</span>", options:["西瓜","榴莲 (Liúlián)","苹果","香蕉"], a:1},
+                {q:"什么路不能走？<span class='pinyin'>Shénme lù bùnéng zǒu?</span>", options:["公路","大路","电路 (Diànlù)","小路"], a:2},
+                {q:"什么鱼不能吃？<span class='pinyin'>Shénme yú bùnéng chī?</span>", options:["木鱼 (Mùyú)","草鱼","红鱼","金鱼"], a:0}
+            ]
         };
-
-        let config = { lang: 'vi', mode: 'easy', step: 0, currentQuestions: [] };
-
-        function shuffle(array) {
-            return array.sort(() => Math.random() - 0.5);
-        }
-
-        function initGame(lang) {
-            config.lang = lang;
-            config.step = 0;
-            config.currentQuestions = shuffle([...gameData.questions[lang]]);
-            document.getElementById('language-screen').classList.add('hidden');
+        let conf = {step:0, q:[]};
+        function initGame(l){ 
+            conf.l = l;
+            conf.q = raw[l].sort(()=>Math.random()-0.5).slice(0,10); 
+            document.getElementById('language-screen').classList.add('hidden'); 
             document.getElementById('mode-screen').classList.remove('hidden');
+            document.getElementById('mode-nct').innerHTML = l=='vi'?"NCT: Chọn độ khó!":"NCT: 请选择难度！<span class='pinyin'>Qǐng xuǎnzé nándù!</span>";
         }
-
-        function startQuiz(mode) {
-            config.mode = mode;
-            document.getElementById('mode-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            showQuestion();
+        function startQuiz(m){ conf.m = m; document.getElementById('mode-screen').classList.add('hidden'); document.getElementById('quiz-screen').classList.remove('hidden'); show(); }
+        function show(){
+            let q = conf.q[conf.step];
+            let p = (conf.m=='easy'?1:conf.m=='medium'?2:5)+conf.step;
+            document.getElementById('penalty-text').innerText = conf.l=='vi'?`PHẠT: ${p} CHÉN`:`惩罚: ${p} 杯`;
+            document.getElementById('question-text').innerHTML = q.q;
+            let btns = document.querySelectorAll('#options .option');
+            q.options.forEach((o,i)=>btns[i].innerText = o);
+            document.getElementById('step-counter').innerText = `Q: ${conf.step+1}/10`;
         }
-
-        function showQuestion() {
-            const q = config.currentQuestions[config.step];
-            const penalty = gameData.modes[config.mode].base + config.step;
-            document.getElementById('step-counter').innerText = `Câu hỏi số ${config.step + 1} / 10`;
-            document.getElementById('penalty-text').innerText = `MỨC PHẠT: ${penalty} CHÉN`;
-            document.getElementById('question-text').innerHTML = q.q + (q.q2 ? `<br><small>${q.q2}</small>` : '');
-            const btns = document.querySelectorAll('.option');
-            q.options.forEach((opt, i) => btns[i].innerText = opt);
+        function selectAnswer(i){
+            if(i===conf.q[conf.step].a){
+                if(conf.step>=9) end(true); else {conf.step++; show();}
+            } else end(false);
         }
-
-        function selectAnswer(i) {
-            if (i === config.currentQuestions[config.step].a) {
-                if (config.step >= 9) showEnd(true);
-                else { config.step++; showQuestion(); }
-            } else showEnd(false);
-        }
-
-        function showEnd(win) {
+        function end(w){
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
-            const p = gameData.modes[config.mode].base + config.step;
-            const title = document.getElementById('result-title');
-            const desc = document.getElementById('result-desc');
-            const nct = document.getElementById('nct-comment');
-
-            if (win) {
-                title.innerHTML = "🏆 CHIẾN THẮNG!";
-                desc.innerHTML = "Bạn quá đỉnh, không thể trở thành Thánh Nhọ!";
-                nct.innerHTML = "NCT: 'Tôi bái phục bạn, mời anh em uống chúc mừng siêu nhân!'";
-            } else {
-                title.innerHTML = "💀 THÁNH NHỌ ĐÂY RỒI!";
-                desc.innerHTML = `Sai rồi! Phạt uống ngay ${p} chén!`;
-                nct.innerHTML = `NCT: 'Chia buồn nhé, chén thứ ${p} này là dành cho bạn!'`;
-            }
+            let p = (conf.m=='easy'?1:conf.m=='medium'?2:5)+conf.step;
+            document.getElementById('result-title').innerText = w?(conf.l=='vi'?"THẮNG!":"胜利!"):(conf.l=='vi'?"NHỌ!":"倒霉!");
+            document.getElementById('result-desc').innerText = w?"🏆":`🍺 x${p}`;
+            document.getElementById('nct-comment').innerText = w?"NCT: Quá giỏi!":"NCT: Uống đi!";
         }
-
-        function resetGame() { location.reload(); }
     </script>
 </body>
 </html>
