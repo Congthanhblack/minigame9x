@@ -1,121 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 Câu Sinh Tử</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#020230;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.box{
+  width:95%;
+  max-width:480px;
+  background:#000;
+  border:3px solid gold;
+  border-radius:16px;
+  padding:20px;
+}
+h1,h2{text-align:center;color:gold}
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:2px solid gold;
+  background:#000;
+  color:#fff;
+  font-weight:bold;
+}
+.option{
+  border:1px solid #0984e3;
+  padding:10px;
+  border-radius:8px;
+  margin-top:8px;
+  cursor:pointer;
+}
+.hidden{display:none}
+#explain{color:#f1c40f;margin-top:10px}
+small{opacity:.7}
+</style>
+</head>
+
+<body>
+<div class="box">
+
+<!-- START -->
+<div id="screen-start">
+  <h1>🧠 15 CÂU SINH TỬ</h1>
+  <button class="btn" onclick="startGame()">BẮT ĐẦU</button>
+</div>
+
+<!-- PLAY -->
+<div id="screen-play" class="hidden">
+  <h2 id="progress"></h2>
+  <p id="question"></p>
+  <div id="options"></div>
+
+  <button id="stopBtn" class="btn hidden" onclick="stopGame()">⏹️ DỪNG CUỘC CHƠI</button>
+  <div id="explain" class="hidden"></div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="hidden">
+  <h1 id="resultTitle"></h1>
+  <p id="resultMsg"></p>
+  <button class="btn" onclick="location.reload()">CHƠI LẠI</button>
+  <small>Game giải trí nhỏ của NCT</small>
+</div>
+
+</div>
+
 <script>
-const LOCK_KEY = "LOCKED_QUESTION_IDS";
-let lockedIds = JSON.parse(localStorage.getItem(LOCK_KEY) || "[]");
+/* ================== DATA ================== */
+const QUESTIONS = [
+  {id:1,level:"easy",q:"Tháng nào có 28 ngày?",o:["Tháng 2","Tất cả","Tháng nhuận","Không có"],c:[1]},
+  {id:2,level:"easy",q:"1 + 1 = ?",o:["1","2","3","4"],c:[1]},
+  {id:3,level:"easy",q:"Mặt trời mọc hướng nào?",o:["Tây","Đông","Nam","Bắc"],c:[1]},
+  {id:4,level:"easy",q:"Con gì kêu gâu gâu?",o:["Mèo","Chó","Gà","Bò"],c:[1]},
+  {id:5,level:"easy",q:"Việt Nam ở châu nào?",o:["Á","Âu","Phi","Mỹ"],c:[0]},
 
-let pack = [];
-let index = 0;
-let usedHelp = false;
+  {id:20,level:"medium",q:"Có công mài ___ có ngày nên kim",o:["dao","sắt","búa","kiếm"],c:[1]},
+  {id:21,level:"medium",q:"Số nguyên tố nhỏ nhất?",o:["1","2","3","0"],c:[1]},
+  {id:22,level:"medium",q:"HTML dùng để?",o:["Style","Logic","Cấu trúc web","Server"],c:[2]},
+  {id:23,level:"medium",q:"Đơn vị đo điện áp?",o:["A","V","W","Hz"],c:[1]},
+  {id:24,level:"medium",q:"Trái đất quay quanh?",o:["Mặt trăng","Sao Hỏa","Mặt trời","Sao Kim"],c:[2]},
 
-/* ===== BUILD PACK 15 CÂU ===== */
-function buildPack() {
-  const pick = (level, n) =>
-    QUESTIONS.filter(q =>
-      q.level === level &&
-      !lockedIds.includes(q.id)
-    ).sort(() => Math.random() - 0.5).slice(0, n);
-
-  const p = [
-    ...pick("easy", 5),
-    ...pick("medium", 5),
-    ...pick("hard", 5)
-  ];
-
-  if (p.length < 15) {
-    alert("Kho câu hỏi sắp hết. Tự động làm mới!");
-    localStorage.removeItem(LOCK_KEY);
-    location.reload();
+  {
+    id:40,level:"hard",
+    q:"Số nào vừa là chính phương vừa là lập phương?",
+    o:["16","36","64","81"],
+    c:[2],
+    explain:"64 = 8² và cũng = 4³"
+  },
+  {
+    id:41,level:"hard",
+    q:"Thứ gì càng lấy đi càng lớn?",
+    o:["Tiền","Hố","Thời gian","Nợ"],
+    c:[1],
+    explain:"Đào đất đi thì hố càng lớn"
+  },
+  {
+    id:42,level:"hard",
+    q:"Hai đáp án đúng: hành tinh không có mặt trăng?",
+    o:["Sao Kim","Sao Thủy","Trái Đất","Sao Hỏa"],
+    c:[0,1],
+    explain:"Sao Kim & Sao Thủy không có vệ tinh"
+  },
+  {
+    id:43,level:"hard",
+    q:"Vì sao bầu trời màu xanh?",
+    o:["Do đại dương","Tán xạ Rayleigh","CO2","Mắt người"],
+    c:[1],
+    explain:"Ánh sáng xanh bị tán xạ mạnh hơn"
+  },
+  {
+    id:44,level:"hard",
+    q:"Nghịch lý nổi tiếng?",
+    o:["Tôi đang nói dối","2+2=4","Trời mưa","Hôm nay thứ 2"],
+    c:[0],
+    explain:"Nếu đúng thì lại sai"
   }
-  return p;
+];
+
+/* ================== LOGIC ================== */
+const LOCK_KEY="LOCKED_IDS";
+let locked=JSON.parse(localStorage.getItem(LOCK_KEY)||"[]");
+let pack=[],index=0;
+
+/* DOM */
+const startScr=document.getElementById("screen-start");
+const playScr=document.getElementById("screen-play");
+const resultScr=document.getElementById("screen-result");
+const progress=document.getElementById("progress");
+const question=document.getElementById("question");
+const options=document.getElementById("options");
+const explainBox=document.getElementById("explain");
+const stopBtn=document.getElementById("stopBtn");
+const resultTitle=document.getElementById("resultTitle");
+const resultMsg=document.getElementById("resultMsg");
+
+/* ===== BUILD PACK ===== */
+function buildPack(){
+  const pick=(lvl,n)=>QUESTIONS.filter(q=>q.level===lvl&&!locked.includes(q.id))
+    .sort(()=>Math.random()-0.5).slice(0,n);
+  return [...pick("easy",5),...pick("medium",5),...pick("hard",5)];
 }
 
-/* ===== START ===== */
-function startGame() {
-  pack = buildPack();
-  index = 0;
-  usedHelp = false;
-  show("play");
+function startGame(){
+  pack=buildPack();
+  index=0;
+  show(playScr);
   loadQ();
 }
 
-/* ===== LOAD QUESTION ===== */
-function loadQ() {
-  const q = pack[index];
-  progress.innerText = `Câu ${index + 1}/15`;
-  question.innerText = q.q;
-  options.innerHTML = "";
-
-  q.o.forEach((t, i) => {
-    const d = document.createElement("div");
-    d.className = "option";
-    d.innerText = t;
-    d.onclick = () => answer(i);
+function loadQ(){
+  const q=pack[index];
+  progress.innerText=`Câu ${index+1}/15`;
+  question.innerText=q.q;
+  options.innerHTML="";
+  q.o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    d.innerText=t;
+    d.onclick=()=>answer(i);
     options.appendChild(d);
   });
-
-  explain.classList.add("hidden");
-  stopBtn.classList.toggle("hidden", index < 9);
+  explainBox.classList.add("hidden");
+  stopBtn.classList.toggle("hidden",index<9);
 }
 
-/* ===== ANSWER ===== */
-function answer(i) {
-  const q = pack[index];
-
-  if (!q.c.includes(i)) {
-    lockAnswered();
-    return showResult("lose");
+function answer(i){
+  const q=pack[index];
+  if(!q.c.includes(i)){
+    lockTouched();
+    return lose();
   }
-
   index++;
-  if (index === 15) {
-    lockAnswered(true);
-    return showResult("win");
+  if(index===15){
+    lockTouched(true);
+    return win();
   }
   loadQ();
 }
 
-/* ===== KHÓA NHỮNG CÂU ĐÃ CHẠM ===== */
-function lockAnswered(all = false) {
-  const touched = all ? pack : pack.slice(0, index + 1);
-  touched.forEach(q => {
-    if (!lockedIds.includes(q.id)) lockedIds.push(q.id);
+function lockTouched(all=false){
+  const touched=all?pack:pack.slice(0,index+1);
+  touched.forEach(q=>{
+    if(!locked.includes(q.id)) locked.push(q.id);
   });
-  localStorage.setItem(LOCK_KEY, JSON.stringify(lockedIds));
+  localStorage.setItem(LOCK_KEY,JSON.stringify(locked));
 }
 
-/* ===== STOP ===== */
-function stopGame() {
-  showResult("stop");
+function stopGame(){
+  resultTitle.innerText="⏹️ DỪNG CUỘC CHƠI";
+  resultMsg.innerText=`Bạn dừng ở câu ${index+1}. Khôn đấy!`;
+  show(resultScr);
 }
 
-/* ===== RESULT ===== */
-function showResult(type) {
-  show("result");
-
-  if (type === "win") {
-    resultTitle.innerText = "👑 HUYỀN THOẠI!";
-    resultMsg.innerText = "15/15 – WOW! Não bạn đúng là quái vật 🧠🔥";
-  }
-  else if (type === "stop") {
-    resultTitle.innerText = "⏹️ DỪNG CUỘC CHƠI";
-    resultMsg.innerText = `Bạn dừng ở câu ${index + 1}. Khôn đấy!`;
-  }
-  else {
-    resultTitle.innerText = "💀 THUA CUỘC";
-    if (index < 9) {
-      resultMsg.innerText =
-        "Èo… bạn còn không thông minh hơn học sinh lớp 5 😭";
-    } else {
-      resultMsg.innerText =
-        `Dừng chân ở câu ${index + 1}. Cũng căng!`;
-    }
-  }
+function lose(){
+  resultTitle.innerText="💀 THUA CUỘC";
+  resultMsg.innerText=index<9
+    ?"Èo… bạn không thông minh hơn học sinh lớp 5 😅"
+    :`Dừng ở câu ${index+1}. Cũng căng!`;
+  show(resultScr);
 }
 
-/* ===== UI HELPER ===== */
-function show(id){
-  start.classList.add("hidden");
-  play.classList.add("hidden");
-  result.classList.add("hidden");
-  document.getElementById(id).classList.remove("hidden");
+function win(){
+  resultTitle.innerText="👑 HUYỀN THOẠI!";
+  resultMsg.innerText="15/15 – WOW! Não bạn đúng là quái vật 🧠🔥";
+  show(resultScr);
+}
+
+function show(scr){
+  startScr.classList.add("hidden");
+  playScr.classList.add("hidden");
+  resultScr.classList.add("hidden");
+  scr.classList.remove("hidden");
 }
 </script>
+</body>
+</html>
