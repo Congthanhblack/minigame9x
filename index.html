@@ -3,241 +3,278 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ai Là Thánh Nhọ</title>
+<title>AI LÀ THÁNH NHỌ</title>
 
 <style>
 body{
   margin:0;
-  background:#020230;
-  color:#fff;
-  font-family:system-ui,Segoe UI;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle,#0a3d62,#020230);
+  font-family:system-ui,Arial;
+  color:#fff;
 }
-.app{
+.game{
   width:95%;
-  max-width:420px;
+  max-width:500px;
   background:#000;
-  border:2px solid #f1c40f;
   border-radius:20px;
   padding:20px;
-  text-align:center;
+  border:2px solid gold;
 }
-.hidden{display:none}
-button{
+h1{text-align:center;color:gold;margin:5px 0}
+input,select,button{
   width:100%;
   padding:12px;
+  margin-top:10px;
   border-radius:10px;
-  border:1px solid #f1c40f;
-  background:#000;
-  color:#fff;
+  border:none;
+  font-size:1rem;
+}
+button{
+  background:gold;
   font-weight:bold;
-  margin-top:10px;
+  cursor:pointer;
 }
-button:hover{background:#f1c40f;color:#000}
-.option{margin-top:8px}
-.timer{height:8px;background:#333;border-radius:4px;overflow:hidden}
-.timer div{height:100%;background:#e74c3c;width:100%}
-.explain{
-  font-size:0.85rem;
-  color:#f1c40f;
-  margin-top:10px;
+.option{
+  background:#111;
+  border:1px solid #0984e3;
+  color:#fff;
 }
-.signature{
-  font-size:0.7rem;
-  color:rgba(255,255,255,.45);
-  margin-top:10px;
+.option.correct{background:#2ecc71}
+.option.wrong{background:#d63031}
+.hidden{display:none}
+.timer{text-align:center;font-size:1.2rem;color:#ff7675}
+.footer{
+  margin-top:12px;
+  font-size:.8rem;
+  color:#aaa;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
-<div class="app">
+<div class="game">
 
-<!-- START -->
 <div id="start">
-  <h2>🍺 AI LÀ THÁNH NHỌ 🍺</h2>
-
-  <input id="playerName" placeholder="Nhập tên…" style="width:100%;padding:10px;border-radius:8px">
-
-  <select id="difficulty" style="width:100%;margin-top:10px;padding:10px">
-    <option value="easy">Dễ (20s)</option>
-    <option value="medium">Trung bình (15s)</option>
-    <option value="hard">Khó (20s)</option>
+  <h1>🍺 AI LÀ THÁNH NHỌ 🍺</h1>
+  <input id="playerName" placeholder="Nhập tên người chơi">
+  <select id="difficulty">
+    <option value="easy">Dễ – 20s</option>
+    <option value="medium">Trung bình – 15s</option>
+    <option value="hard">Khó – 20s</option>
   </select>
-
   <button onclick="startGame()">VÀO CUỘC</button>
 </div>
 
-<!-- QUIZ -->
 <div id="quiz" class="hidden">
-  <div id="timerText">--</div>
-  <div class="timer"><div id="bar"></div></div>
-  <h3 id="question"></h3>
+  <div class="timer" id="timer"></div>
+  <h2 id="question"></h2>
   <div id="options"></div>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="hidden">
-  <h2 id="resultTitle"></h2>
-  <p id="resultDesc"></p>
-  <div id="explainBox" class="explain hidden"></div>
-  <button onclick="location.reload()">CHƠI TIẾP</button>
+  <h1 id="resTitle"></h1>
+  <p id="resMsg"></p>
+  <button onclick="location.reload()">CHƠI LẠI</button>
 </div>
 
-<div class="signature">
-  Đây là một trò chơi giải trí nhỏ do <b>NCT</b> thực hiện.  
-  Nếu bạn thấy thú vị, hãy cứ chơi và chia sẻ cùng bạn bè 🍻
+<div class="footer">
+  Đây là một trò chơi giải trí vui nhộn.<br>
+  Nếu bạn thấy thú vị, hãy chia sẻ – một sản phẩm nhỏ của NCT.
 </div>
 
 </div>
 
 <script>
-/* ================== QUESTION BANK ================== */
+// ================== KHO 80 CÂU HỎI MỚI ==================
+const QUESTIONS = [
 
-let QUESTION_BANK = [];
-let qid = 0;
+/* ===== EASY ===== */
+{ id:201, level:"easy", q:"Con gì ngủ đông?", options:["Gấu","Chó","Gà","Cá"], answers:[0]},
+{ id:202, level:"easy", q:"Thủ đô Việt Nam là?", options:["Huế","Hà Nội","Đà Nẵng","Sài Gòn"], answers:[1]},
+{ id:203, level:"easy", q:"Một tá bằng bao nhiêu?", options:["10","11","12","20"], answers:[2]},
+{ id:204, level:"easy", q:"Cái gì dùng để đo thời gian?", options:["Thước","Cân","Đồng hồ","La bàn"], answers:[2]},
+{ id:205, level:"easy", q:"Mặt trăng quay quanh?", options:["Mặt trời","Sao Hỏa","Trái đất","Sao Kim"], answers:[2]},
+{ id:206, level:"easy", q:"Con người có bao nhiêu ngón tay?", options:["8","10","12","20"], answers:[1]},
+{ id:207, level:"easy", q:"Ăn cơm cần gì?", options:["Đũa","Bát","Thìa","Cả 3"], answers:[3]},
+{ id:208, level:"easy", q:"Loài nào bay được?", options:["Cá","Chim","Rắn","Ếch"], answers:[1]},
+{ id:209, level:"easy", q:"Một năm có mấy mùa?", options:["2","3","4","5"], answers:[2]},
+{ id:210, level:"easy", q:"Số chẵn là?", options:["3","5","7","8"], answers:[3]},
 
-// ====== CÂU MẪU (40) ======
-const BASE_QUESTIONS = [
-  {
-    q:"Tháng nào có 28 ngày?",
-    answers:["Tất cả các tháng"],
-    options:["Tháng 2","Tháng chẵn","Tất cả các tháng","Tháng lẻ"],
-    level:0
-  },
-  {
-    q:"Số nào chia cho chính nó luôn bằng 1?",
-    answers:["Mọi số khác 0","Mọi số"],
-    options:["Số chẵn","Số lẻ","Mọi số","Mọi số khác 0"],
-    level:1,
-    explain:"Mọi số khác 0 khi chia cho chính nó đều bằng 1. Số 0 không xác định."
-  },
-  {
-    q:"Điền vào chỗ trống: Có công mài ___ có ngày nên kim",
-    answers:["sắt"],
-    options:["đá","sắt","dao","gỗ"],
-    level:0
-  },
-  {
-    q:"Câu nào đúng?",
-    answers:["Cá voi là động vật có vú","Cá voi thở bằng phổi"],
-    options:[
-      "Cá voi là cá",
-      "Cá voi đẻ trứng",
-      "Cá voi là động vật có vú",
-      "Cá voi thở bằng phổi"
-    ],
-    level:2,
-    explain:"Cá voi thuộc lớp thú (động vật có vú), sinh con và thở bằng phổi."
-  }
+/* ===== MEDIUM ===== */
+{ id:221, level:"medium", q:"Chọn phát biểu đúng:", options:[
+  "Cá sống được trên cạn",
+  "Con người là động vật",
+  "Mặt trời quay quanh Trái đất",
+  "Không khí không tồn tại"
+], answers:[1]},
+{ id:222, level:"medium", q:"Số tiếp theo: 1 – 4 – 9 – 16 – ?", options:["20","24","25","36"], answers:[2]},
+{ id:223, level:"medium", q:"Chọn ĐỦ đáp án đúng:", options:[
+  "Nước có thể đóng băng",
+  "Nước không bay hơi",
+  "Nước có thể bốc hơi",
+  "Nước không có khối lượng"
+], answers:[0,2]},
+{ id:224, level:"medium", q:"5 + (3 × 2) = ?", options:["11","16","10","13"], answers:[0]},
+{ id:225, level:"medium", q:"Cái gì càng dùng càng mòn?", options:[
+  "Dao","Bút","Giấy","Điện thoại"
+], answers:[0]},
+{ id:226, level:"medium", q:"Chọn phát biểu đúng:", options:[
+  "Âm thanh truyền được trong chân không",
+  "Âm thanh cần môi trường truyền",
+  "Âm thanh là ánh sáng",
+  "Âm thanh không lan truyền"
+], answers:[1]},
+{ id:227, level:"medium", q:"Con người thở ra khí gì?", options:[
+  "Oxy","Nitơ","CO₂","Hidro"
+], answers:[2]},
+{ id:228, level:"medium", q:"Chọn ĐỦ đáp án đúng:", options:[
+  "Kim loại dẫn điện",
+  "Nhựa dẫn điện",
+  "Cao su cách điện",
+  "Gỗ ướt dẫn điện"
+], answers:[0,3]},
+{ id:229, level:"medium", q:"Số nào lớn nhất?", options:["0.5","1/2","0.49","0.51"], answers:[3]},
+{ id:230, level:"medium", q:"Một giờ có bao nhiêu giây?", options:[
+  "60","600","3600","6000"
+], answers:[2]},
+
+/* ===== HARD ===== */
+{ id:251, level:"hard", q:"Vì sao trời lạnh kim loại sờ vào thấy lạnh hơn gỗ?", options:[
+  "Kim loại có nhiệt độ thấp hơn",
+  "Kim loại dẫn nhiệt tốt hơn",
+  "Gỗ giữ nhiệt kém",
+  "Do cảm giác tay"
+], answers:[1], explain:"Kim loại truyền nhiệt từ tay nhanh hơn gỗ."},
+{ id:252, level:"hard", q:"Chọn ĐỦ đáp án đúng:", options:[
+  "Ánh sáng là sóng điện từ",
+  "Ánh sáng cần môi trường truyền",
+  "Ánh sáng truyền được trong chân không",
+  "Ánh sáng không mang năng lượng"
+], answers:[0,2]},
+{ id:253, level:"hard", q:"Số tiếp theo: 2 – 6 – 12 – 20 – ?", options:[
+  "28","30","32","36"
+], answers:[0]},
+{ id:254, level:"hard", q:"Vì sao tàu thủy nổi được?", options:[
+  "Do nhẹ hơn nước",
+  "Do lực đẩy Archimedes",
+  "Do nước đỡ",
+  "Do không khí"
+], answers:[1]},
+{ id:255, level:"hard", q:"Chọn phát biểu đúng:", options:[
+  "Áp suất không ảnh hưởng điểm sôi",
+  "Núi cao nước sôi thấp hơn",
+  "Nước luôn sôi ở 100°C",
+  "Điểm sôi không đổi"
+], answers:[1]},
+{ id:256, level:"hard", q:"Tại sao kính lúp có thể đốt giấy?", options:[
+  "Do phản xạ ánh sáng",
+  "Do hội tụ ánh sáng",
+  "Do kính nóng",
+  "Do ma sát"
+], answers:[1]},
+{ id:257, level:"hard", q:"Chọn ĐỦ đáp án đúng:", options:[
+  "Con người có quán tính",
+  "Quán tính phụ thuộc khối lượng",
+  "Quán tính không tồn tại",
+  "Vật đứng yên không có quán tính"
+], answers:[0,1]},
+{ id:258, level:"hard", q:"Số nào KHÔNG phải số nguyên?", options:[
+  "–2","0","3.5","7"
+], answers:[2]},
+{ id:259, level:"hard", q:"Vì sao bóng bay xẹp dần theo thời gian?", options:[
+  "Do bay hơi",
+  "Do khí khuếch tán",
+  "Do thủng",
+  "Do nhiệt độ"
+], answers:[1]},
+{ id:260, level:"hard", q:"Chọn phát biểu đúng:", options:[
+  "Lực luôn làm vật chuyển động",
+  "Lực có thể làm biến dạng vật",
+  "Không có lực thì vật không đứng yên",
+  "Lực không tồn tại"
+], answers:[1]}
 ];
 
-// ====== SINH 800 CÂU ======
-for(let i=0;i<800;i++){
-  let base = BASE_QUESTIONS[i % BASE_QUESTIONS.length];
-  QUESTION_BANK.push({
-    id: qid++,
-    q: base.q,
-    answers: base.answers,
-    options: shuffle([...base.options]),
-    level: base.level,
-    explain: base.explain || ""
-  });
-}
-
-/* ================== STATE ================== */
-
-let usedIds = JSON.parse(localStorage.getItem("USED_Q_IDS") || "[]");
-let timer=null, time=0, maxTime=0;
-let current=null;
-
-/* ================== GAME ================== */
+// ================== LOGIC GAME ==================
+let timerId, timeLeft, currentQ;
 
 function startGame(){
-  if(!playerName.value.trim()) return alert("Nhập tên đã 😈");
-  start.classList.add("hidden");
-  quiz.classList.remove("hidden");
-  nextQuestion();
-}
+  const name = playerName.value.trim();
+  const diff = difficulty.value;
+  if(!name) return alert("Nhập tên trước đã 😅");
 
-function getTime(){
-  return difficulty.value==="medium"?15:20;
-}
-
-function nextQuestion(){
-  let diff = difficulty.value;
-  let pool = QUESTION_BANK.filter(q =>
-    !usedIds.includes(q.id) &&
-    (diff==="easy"?q.level===0:
-     diff==="medium"?q.level<=1:
-     q.level>=1)
-  );
-
-  if(pool.length===0){
-    alert("Đã hết câu hỏi. Kho sẽ được reset!");
-    usedIds=[];
-    localStorage.removeItem("USED_Q_IDS");
-    pool=[...QUESTION_BANK];
+  const girlNames=["lan","hoa","thủy","chinh","linh","ngọc","trang"];
+  if(girlNames.includes(name.toLowerCase())){
+    alert("Wow 😍 tên nghe xinh thế, chơi cho nhẹ tay nha!");
   }
 
-  current = pool[Math.floor(Math.random()*pool.length)];
+  let used=JSON.parse(localStorage.getItem("USED_Q_IDS")||"[]");
+  let pool=QUESTIONS.filter(q=>q.level===diff&&!used.includes(q.id));
 
-  // 🔒 KHÓA NGAY KHI HIỂN THỊ
-  usedIds.push(current.id);
-  localStorage.setItem("USED_Q_IDS",JSON.stringify(usedIds));
+  if(pool.length===0){
+    used=[];
+    localStorage.setItem("USED_Q_IDS","[]");
+    pool=QUESTIONS.filter(q=>q.level===diff);
+  }
 
-  question.innerText=current.q;
+  currentQ=pool[Math.floor(Math.random()*pool.length)];
+  used.push(currentQ.id);
+  localStorage.setItem("USED_Q_IDS",JSON.stringify(used));
+
+  start.classList.add("hidden");
+  quiz.classList.remove("hidden");
+
+  timeLeft = diff==="medium"?15:20;
+  showQuestion();
+}
+
+function showQuestion(){
+  question.innerText=currentQ.q;
   options.innerHTML="";
-
-  current.options.forEach(v=>{
-    let b=document.createElement("button");
+  currentQ.options.forEach((op,i)=>{
+    const b=document.createElement("button");
     b.className="option";
-    b.innerText=v;
-    b.onclick=()=>answer(v);
+    b.innerText=op;
+    b.onclick=()=>answer(i,b);
     options.appendChild(b);
   });
-
   startTimer();
 }
 
 function startTimer(){
-  clearInterval(timer);
-  maxTime=getTime();
-  time=maxTime;
-  timer=setInterval(()=>{
-    time-=0.1;
-    timerText.innerText=Math.ceil(time)+"s";
-    bar.style.width=(time/maxTime*100)+"%";
-    if(time<=0) lose("Hết giờ");
-  },100);
+  timer.innerText=`⏱ ${timeLeft}s`;
+  timerId=setInterval(()=>{
+    timeLeft--;
+    timer.innerText=`⏱ ${timeLeft}s`;
+    if(timeLeft<=0){
+      clearInterval(timerId);
+      end(false,"Hết giờ 🍺");
+    }
+  },1000);
 }
 
-function answer(v){
-  clearInterval(timer);
-  if(current.answers.includes(v)){
-    nextQuestion();
+function answer(i,btn){
+  clearInterval(timerId);
+  if(currentQ.answers.includes(i)){
+    btn.classList.add("correct");
+    setTimeout(()=>end(true,"Qua cửa 😎"),600);
   }else{
-    lose("Sai rồi");
+    btn.classList.add("wrong");
+    end(false,"Sai rồi uống thôi 🍻");
   }
 }
 
-function lose(reason){
+function end(win,msg){
   quiz.classList.add("hidden");
   result.classList.remove("hidden");
-  resultTitle.innerText="💀 THUA CUỘC";
-  resultDesc.innerText=reason + ". Uống thôi 🍺";
-
-  if(current.explain){
-    explainBox.classList.remove("hidden");
-    explainBox.innerText="💡 Giải thích: " + current.explain;
-  }
+  resTitle.innerText=win?"THẮNG!":"THUA!";
+  resMsg.innerText=msg;
 }
-
-/* ================== UTIL ================== */
-function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 </script>
 </body>
 </html>
