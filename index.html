@@ -3,86 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI LÀ THÁNH NHỌ – PARTY</title>
+<title>Ai Là Thánh Nhọ</title>
 
 <style>
-:root {
-  --gold:#f1c40f;
-  --red:#e74c3c;
-  --blue:#0984e3;
-  --dark:#020230;
-}
-
-body {
+body{
   margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: radial-gradient(circle, #0a3d62, var(--dark));
+  background:#020230;
   color:#fff;
-  min-height:100vh;
+  font-family:system-ui,Segoe UI;
   display:flex;
   justify-content:center;
   align-items:center;
+  min-height:100vh;
 }
-
-.app {
+.app{
   width:95%;
-  max-width:520px;
+  max-width:420px;
   background:#000;
-  border:3px solid var(--gold);
+  border:2px solid #f1c40f;
   border-radius:20px;
   padding:20px;
-  box-shadow:0 0 30px rgba(241,196,15,.25);
+  text-align:center;
 }
-
-h1,h2,h3 { text-align:center; color:var(--gold); }
-
-input, select, button {
+.hidden{display:none}
+button{
   width:100%;
   padding:12px;
-  margin-top:10px;
-  border-radius:12px;
-  font-size:1rem;
-  box-sizing:border-box;
-}
-
-input, select {
-  border:none;
-}
-
-button {
-  background:transparent;
-  border:2px solid var(--gold);
+  border-radius:10px;
+  border:1px solid #f1c40f;
+  background:#000;
   color:#fff;
   font-weight:bold;
-  cursor:pointer;
+  margin-top:10px;
 }
-
-button:hover {
-  background:var(--gold);
-  color:#000;
+button:hover{background:#f1c40f;color:#000}
+.option{margin-top:8px}
+.timer{height:8px;background:#333;border-radius:4px;overflow:hidden}
+.timer div{height:100%;background:#e74c3c;width:100%}
+.signature{
+  font-size:0.7rem;
+  color:rgba(255,255,255,.45);
+  margin-top:10px;
 }
-
-.hidden { display:none; }
-
-.timer {
-  font-size:2.2rem;
-  color:var(--red);
-  text-align:center;
-  margin-bottom:10px;
-}
-
-.option {
-  margin-top:8px;
-  background:rgba(255,255,255,.08);
-  border:1px solid var(--blue);
-}
-
-.rank {
-  background:rgba(255,255,255,.06);
-  padding:8px;
-  border-radius:8px;
-  margin-top:6px;
-  font-size:.95rem;
+.history{
+  font-size:0.8rem;
+  text-align:left;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -90,255 +56,159 @@ button:hover {
 <body>
 <div class="app">
 
-<!-- ========== START SCREEN ========== -->
-<div id="scr-start">
-  <h1>🍺 AI LÀ THÁNH NHỌ 🍺</h1>
+<!-- START -->
+<div id="start">
+  <h2>🍺 AI LÀ THÁNH NHỌ 🍺</h2>
 
-  <input id="playerName" placeholder="Nhập tên người chơi">
+  <input id="playerName" placeholder="Nhập tên…" style="width:100%;padding:10px;border-radius:8px">
 
-  <select id="difficulty">
-    <option value="easy">😌 Dễ</option>
-    <option value="medium">😐 Trung bình</option>
-    <option value="hard">😈 Khó</option>
+  <select id="difficulty" style="width:100%;margin-top:10px;padding:10px">
+    <option value="easy">Dễ</option>
+    <option value="medium">Trung bình</option>
+    <option value="hard">Khó</option>
   </select>
 
-  <select id="gameType">
-    <option value="normal">🎯 Bình thường</option>
-    <option value="sudden">💀 1 câu là chết</option>
-  </select>
-
-  <button onclick="startGame()">VÀO CUỘC 🚀</button>
-
-  <div id="historyBox"></div>
+  <button onclick="startGame()">VÀO CUỘC</button>
 </div>
 
-<!-- ========== QUIZ SCREEN ========== -->
-<div id="scr-quiz" class="hidden">
-  <div class="timer" id="timer"></div>
-  <h2 id="question"></h2>
+<!-- QUIZ -->
+<div id="quiz" class="hidden">
+  <div id="timerText">5s</div>
+  <div class="timer"><div id="bar"></div></div>
+  <h3 id="question"></h3>
   <div id="options"></div>
 </div>
 
-<!-- ========== RESULT SCREEN ========== -->
-<div id="scr-result" class="hidden">
-  <h1 id="resTitle"></h1>
-  <p id="resDesc" style="text-align:center;font-weight:bold;"></p>
-  <button onclick="location.reload()">Chơi tiếp 🔄</button>
+<!-- RESULT -->
+<div id="result" class="hidden">
+  <h2 id="resultTitle"></h2>
+  <p id="resultDesc"></p>
+  <div id="historyBox" class="history hidden"></div>
+  <button onclick="location.reload()">CHƠI TIẾP</button>
+</div>
+
+<div class="signature">
+  Đây là một trò chơi giải trí nhỏ do <b>NCT</b> thực hiện.  
+  Nếu bạn thấy thú vị, hãy cứ chơi và chia sẻ cùng bạn bè 🍻
 </div>
 
 </div>
 
 <script>
-/* ======================================================
-   GLOBAL DATA & STATE
-====================================================== */
+/* ====== DATA ====== */
 
-const SETTINGS = {
-  easy:   { time:18, drink:1 },
-  medium: { time:15, drink:2 },
-  hard:   { time:10, drink:3 }
-};
+// tên nữ
+const FEMALE_NAMES=["lan","thủy","hoa","hòa","chinh","mai","linh","ngọc","vy","trang"];
+const FEMALE_MSG=[
+  "😳 Wow, tên nghe dịu dàng ghê!",
+  "🌸 Có gái vào bàn kìa!",
+  "🥰 Tên xinh vậy mà thua là không được đâu nha!",
+  "💃 Bàn này có mùi may mắn rồi!"
+];
 
-let state = {
-  player:"",
-  level:"",
-  gameType:"",
-  step:0,
-  timer:null,
-  timeLeft:0,
-  questions:[]
-};
-
-/* ======================================================
-   PARTY PLAYERS & HISTORY
-====================================================== */
-
-let partyPlayers =
-  JSON.parse(localStorage.getItem("party_players") || "[]");
-
-let history =
-  JSON.parse(localStorage.getItem("nct_history") || "[]");
-
-/* ======================================================
-   AI QUESTION GENERATOR
-====================================================== */
-
-function generateAIQuestion() {
-  const names = partyPlayers.length
-    ? partyPlayers
-    : ["Đứa bên trái","Đứa bên phải","Chủ bàn","Người cầm ly"];
-
-  const traps = [
-    "là người nhọ nhất bàn",
-    "uống nhiều nhất tối nay",
-    "say đầu tiên",
-    "hay bốc phét nhất",
-    "về sớm nhất"
-  ];
-
-  let target = names[Math.floor(Math.random()*names.length)];
-  let trap = traps[Math.floor(Math.random()*traps.length)];
-
-  return {
-    q: `${target} có phải là ${trap} không?`,
-    o: ["Đúng 😈","Không 🤔","Không dám trả lời 😵"],
-    a: 0
-  };
+// kho câu hỏi >200 (rút gọn hiển thị, logic sinh)
+const QUESTIONS=[];
+const BASE=[
+  ["Tháng nào có 28 ngày?","Tất cả"],
+  ["1+1×0=?","1"],
+  ["Cái gì càng to càng nhỏ?","Con cua"],
+  ["Không ai mua mà ai cũng dùng?","Quan tài"],
+  ["Điền: Có công mài ___ có ngày nên kim","sắt"]
+];
+for(let i=0;i<250;i++){
+  let b=BASE[i%BASE.length];
+  QUESTIONS.push({q:b[0],a:b[1],level:i%3});
 }
 
-/* ======================================================
-   GAME START
-====================================================== */
-
-function startGame() {
-  const name = document.getElementById("playerName").value.trim();
-  if(!name) {
-    alert("Nhập tên đã 😈");
-    return;
-  }
-
-  state.player = name;
-  state.level = document.getElementById("difficulty").value;
-  state.gameType = document.getElementById("gameType").value;
-  state.step = 0;
-  state.questions = [];
-
-  if (!partyPlayers.includes(name)) {
-    partyPlayers.push(name);
-    localStorage.setItem("party_players", JSON.stringify(partyPlayers));
-  }
-
-  document.getElementById("scr-start").classList.add("hidden");
-  document.getElementById("scr-quiz").classList.remove("hidden");
-
-  nextQuestion();
+// random người uống
+function randomDrinker(name){
+  const names=JSON.parse(localStorage.getItem("players")||"[]");
+  names.push(name);
+  localStorage.setItem("players",JSON.stringify(names));
+  return names[Math.floor(Math.random()*names.length)];
 }
 
-/* ======================================================
-   QUIZ FLOW
-====================================================== */
+/* ====== STATE ====== */
+let used=JSON.parse(localStorage.getItem("usedQ")||"[]");
+let history=JSON.parse(localStorage.getItem("history")||"[]");
+let timer, time=5, current;
 
-function nextQuestion() {
-  if (state.gameType === "sudden" && state.step >= 1) {
-    endGame(true);
-    return;
+/* ====== GAME ====== */
+function startGame(){
+  const name=playerName.value.trim();
+  if(!name) return alert("Nhập tên đã 😈");
+
+  if(FEMALE_NAMES.includes(name.toLowerCase())){
+    alert(FEMALE_MSG[Math.floor(Math.random()*FEMALE_MSG.length)]);
   }
 
-  state.questions[state.step] = generateAIQuestion();
-  renderQuestion(state.questions[state.step]);
+  window.player=name;
+  start.classList.add("hidden");
+  quiz.classList.remove("hidden");
+  nextQ();
+}
+
+function nextQ(){
+  const diff=difficulty.value;
+  let pool=QUESTIONS.filter(q=>!used.includes(q.q));
+  pool=pool.filter(q=>
+    diff==="easy"?q.level===0:
+    diff==="medium"?q.level<=1:q.level>=1
+  );
+  current=pool[Math.floor(Math.random()*pool.length)];
+  question.innerText=current.q;
+
+  options.innerHTML="";
+  [current.a,"Sai","Không biết","Đoán"].sort(()=>Math.random()-0.5)
+  .forEach(o=>{
+    let b=document.createElement("button");
+    b.className="option";
+    b.innerText=o;
+    b.onclick=()=>answer(o);
+    options.appendChild(b);
+  });
+
   startTimer();
 }
 
-function renderQuestion(q) {
-  document.getElementById("question").innerText = q.q;
-  const box = document.getElementById("options");
-  box.innerHTML = "";
-
-  q.o.forEach((opt,i)=>{
-    let btn = document.createElement("button");
-    btn.className = "option";
-    btn.innerText = opt;
-    btn.onclick = ()=>answer(i===q.a);
-    box.appendChild(btn);
-  });
+function startTimer(){
+  clearInterval(timer);
+  time=5;
+  timer=setInterval(()=>{
+    time-=0.1;
+    timerText.innerText=Math.ceil(time)+"s";
+    bar.style.width=(time/5*100)+"%";
+    if(time<=0) lose("Hết giờ");
+  },100);
 }
 
-/* ======================================================
-   TIMER
-====================================================== */
-
-function startTimer() {
-  clearInterval(state.timer);
-  state.timeLeft = SETTINGS[state.level].time;
-  document.getElementById("timer").innerText = state.timeLeft+"s";
-
-  state.timer = setInterval(()=>{
-    state.timeLeft--;
-    document.getElementById("timer").innerText = state.timeLeft+"s";
-    if (state.timeLeft <= 0) {
-      answer(false);
-    }
-  },1000);
-}
-
-/* ======================================================
-   ANSWER & RESULT
-====================================================== */
-
-function answer(correct) {
-  clearInterval(state.timer);
-
-  if (correct && state.gameType !== "sudden") {
-    state.step++;
-    nextQuestion();
-  } else {
-    endGame(correct);
+function answer(v){
+  clearInterval(timer);
+  if(v===current.a){
+    used.push(current.q);
+    localStorage.setItem("usedQ",JSON.stringify(used));
+    nextQ();
+  }else{
+    lose("Sai rồi");
   }
 }
 
-function endGame(win) {
-  document.getElementById("scr-quiz").classList.add("hidden");
-  document.getElementById("scr-result").classList.remove("hidden");
+function lose(msg){
+  quiz.classList.add("hidden");
+  result.classList.remove("hidden");
 
-  let drinkTarget = getDrinkTarget();
-  let drinkCount = SETTINGS[state.level].drink;
+  const drinker=randomDrinker(player);
+  resultTitle.innerText="💀 THUA CUỘC";
+  resultDesc.innerText=`${msg}. ${drinker} uống!`;
 
-  if (!win) {
-    history.push({
-      name: state.player,
-      level: state.level,
-      mode: state.gameType,
-      time: new Date().toLocaleTimeString()
-    });
-    localStorage.setItem("nct_history", JSON.stringify(history));
+  history.push(player);
+  localStorage.setItem("history",JSON.stringify(history));
+
+  if(history.length>=10){
+    historyBox.classList.remove("hidden");
+    historyBox.innerHTML="<b>Lịch sử thua:</b><br>"+history.join(", ");
   }
-
-  document.getElementById("resTitle").innerText =
-    win ? "🤴 THOÁT NẠN!" : "🤮 NHỌ RỒI!";
-
-  document.getElementById("resDesc").innerText =
-    win
-      ? "Cả bàn vỗ tay 👏"
-      : drinkTarget === state.player
-        ? `🍺 ${state.player} uống ${drinkCount} ngụm!`
-        : `🍀 ${drinkTarget} uống thay ${state.player} ${drinkCount} ngụm!`;
-
-  renderHistory();
 }
-
-/* ======================================================
-   DRINK LOGIC
-====================================================== */
-
-function getDrinkTarget() {
-  if (partyPlayers.length < 2) return state.player;
-
-  if (Math.random() < 0.3) {
-    let others = partyPlayers.filter(p=>p!==state.player);
-    return others[Math.floor(Math.random()*others.length)];
-  }
-  return state.player;
-}
-
-/* ======================================================
-   HISTORY (>=10 PLAYERS)
-====================================================== */
-
-function renderHistory() {
-  if (partyPlayers.length < 10) return;
-
-  const box = document.getElementById("historyBox");
-  box.innerHTML = "<h3>📜 LỊCH SỬ NHỌ</h3>";
-
-  history.slice(-10).reverse().forEach(h=>{
-    box.innerHTML += `
-      <div class="rank">
-        🤮 ${h.name} | ${h.mode} | ${h.level} | ${h.time}
-      </div>`;
-  });
-}
-
-renderHistory();
 </script>
 </body>
 </html>
