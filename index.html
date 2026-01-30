@@ -7,10 +7,10 @@
 <style>
 :root{--gold:#ffd700;--neon:#00f3ff;--bg:#050505;--panel:#1a1a1a;--wrong:#ff0044;--right:#00ff88;}
 body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;user-select:none}
-.box{width:95%;max-width:600px;background:var(--panel);border:1px solid #333;border-radius:20px;padding:25px;box-shadow:0 0 50px rgba(0,243,255,0.1);position:relative;display:flex;flex-direction:column;min-height:550px}
+.box{width:95%;max-width:600px;background:var(--panel);border:1px solid #333;border-radius:20px;padding:25px;box-shadow:0 0 50px rgba(0,243,255,0.1);position:relative;display:flex;flex-direction:column;min-height:600px}
 
-/* HEADER */
-.intro-text{text-align:center;color:#aaa;font-size:0.95em;font-style:italic;margin-bottom:20px;line-height:1.5;border-bottom:1px solid #333;padding-bottom:15px}
+/* HEADER & FOOTER */
+.intro-text{text-align:center;color:#888;font-size:0.9em;font-style:italic;margin-top:30px;line-height:1.6;border-top:1px solid #333;padding-top:15px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-weight:bold;color:var(--gold)}
 
 /* LIFELINES */
@@ -23,10 +23,10 @@ body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;
 .life-btn.used::before{content:'❌';position:absolute;color:red;font-size:1.5em;z-index:2}
 
 /* GAMEPLAY */
-#timer{font-size:3.5em;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 20px var(--neon);margin:10px 0;font-family:monospace}
-#question{font-size:1.3em;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;margin:15px 0;line-height:1.4}
+#timer{font-size:3.5em;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 20px var(--neon);margin:5px 0;font-family:monospace}
+#question{font-size:1.25em;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;margin:15px 0;line-height:1.4;font-weight:500}
 .options-grid{display:grid;gap:10px;margin-top:auto}
-.option{padding:15px;background:#2a2a2a;border:1px solid #444;border-radius:10px;cursor:pointer;transition:.2s;font-size:1.1em;position:relative;overflow:hidden}
+.option{padding:15px;background:#2a2a2a;border:1px solid #444;border-radius:10px;cursor:pointer;transition:.2s;font-size:1.05em;position:relative;overflow:hidden; display:flex; align-items:center;}
 .option:hover{background:#333;border-color:var(--neon)}
 .option.correct{background:var(--right)!important;color:#000;font-weight:bold}
 .option.wrong{background:var(--wrong)!important;color:#fff}
@@ -34,10 +34,11 @@ body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;
 
 /* SCREENS */
 .hidden{display:none!important}
-.start-screen{text-align:center;padding:10px}
-.start-screen h1{color:var(--neon);font-size:2.2em;text-transform:uppercase;margin-bottom:5px;letter-spacing:2px}
-.inp-name{width:80%;padding:15px;background:#111;border:2px solid var(--neon);color:#fff;font-size:1.2em;text-align:center;margin:20px 0;border-radius:50px;outline:none}
-.btn-main{padding:15px 50px;background:var(--gold);color:#000;font-weight:bold;font-size:1.2em;border:none;border-radius:50px;cursor:pointer;transition:0.3s;text-transform:uppercase}
+.start-screen{text-align:center;padding:10px; display:flex; flex-direction:column; justify-content:center; height:100%;}
+.start-screen h1{color:var(--neon);font-size:2.5em;text-transform:uppercase;margin-bottom:10px;letter-spacing:2px; text-shadow: 0 0 10px rgba(0,243,255,0.5);}
+.start-screen p {margin-bottom: 30px;}
+.inp-name{width:80%;padding:15px;background:#111;border:2px solid var(--neon);color:#fff;font-size:1.2em;text-align:center;margin:0 auto 20px auto;border-radius:50px;outline:none}
+.btn-main{padding:15px 50px;background:var(--gold);color:#000;font-weight:bold;font-size:1.2em;border:none;border-radius:50px;cursor:pointer;transition:0.3s;text-transform:uppercase; width: fit-content; margin: 0 auto;}
 .btn-main:hover{transform:scale(1.05);box-shadow:0 0 20px var(--gold)}
 
 /* OVERLAY */
@@ -45,24 +46,24 @@ body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;
 #ov-content{font-size:1.2em;margin:20px 0;line-height:1.6}
 .close-btn{padding:10px 30px;background:var(--neon);border:none;border-radius:5px;font-weight:bold;cursor:pointer}
 
-/* ANIMATION */
-@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}100%{transform:translateX(0)}}
-.shake{animation:shake 0.3s ease-in-out}
 </style>
 </head>
 <body>
 
 <div class="box">
   <div id="screen-start" class="start-screen">
+    <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+        <h1>Thánh Troll<br>Đại Chiến</h1>
+        <p style="color:#666;font-size:0.9em">🔥 Cảnh báo: Đáp án cực kỳ lươn lẹo!</p>
+        <input type="text" id="inp-name" class="inp-name" placeholder="Nhập danh tính vào đây..." autocomplete="off">
+        <button class="btn-main" onclick="game.start()">Bắt đầu</button>
+    </div>
+    
     <div class="intro-text">
         Xin chào Bạn yêu, hôm nay mệt mỏi hay nhiều niềm vui?<br>
         Thư giãn, giải trí 1 chút nhé, hy vọng sau khi chơi bạn không cay cú 😆<br>
         Đây là mini game của NCT...
     </div>
-    <h1>Thánh Troll<br>Đại Chiến</h1>
-    <p style="color:#666;font-size:0.9em">🔥 Cảnh báo: Từ câu 7 trở đi rất hại não!</p>
-    <input type="text" id="inp-name" class="inp-name" placeholder="Nhập tên vào đây..." autocomplete="off">
-    <button class="btn-main" onclick="game.start()">Bắt đầu</button>
   </div>
 
   <div id="screen-play" class="hidden" style="display:flex; flex-direction:column; height:100%">
@@ -91,67 +92,56 @@ body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;
 </div>
 
 <script>
-/* ================= DATABASE PHÂN LOẠI ĐỘ KHÓ ================= */
-// Level 1: Dễ/Đố mẹo vui (Dùng cho câu 1-6)
+/* ================= DATABASE ĐÃ NÂNG CẤP (ĐÁP ÁN GÂY NHIỄU) ================= */
+// Level 1: Dễ nhưng đáp án nhiễu (Câu 1-6)
 const DB_EASY = [
-    {q:"Con gà có trước hay quả trứng có trước?", o:["Gà","Trứng","Cả hai","Không biết"], c:1},
-    {q:"1 kg sắt và 1 kg bông, cái nào nặng hơn?", o:["Sắt","Bông","Bằng nhau","Tùy loại"], c:2},
-    {q:"Tháng nào trong năm có 28 ngày?", o:["Tháng 2","Tháng Chạp","Tháng Giêng","Tất cả các tháng"], c:3},
-    {q:"Mặt trời mọc hướng nào?", o:["Đông","Tây","Nam","Bắc"], c:0},
-    {q:"Bánh chưng hình gì?", o:["Tròn","Vuông","Tam giác","Chữ nhật"], c:1},
-    {q:"Cái gì tay trái cầm được còn tay phải thì không?", o:["Bút","Cùi chỏ trái","Cùi chỏ phải","Điện thoại"], c:2},
-    {q:"Khi bắn súng người ta nhắm mấy mắt?", o:["1 mắt","2 mắt","Mở hết","Nhắm hết"], c:0},
-    {q:"Con gì đập thì sống, không đập thì chết?", o:["Con cá","Con tim","Con quay","Con muỗi"], c:1},
-    {q:"Sông gì không có nước?", o:["Sông Hồng","Sông Tiền","Sông Ngân Hà","Sông Đà"], c:2},
-    {q:"Cái gì càng cất lại càng thấy?", o:["Tiền","Vàng","Cát","Rác"], c:1}, // Cát (xây dựng)
-    {q:"Xe nào không bao giờ giảm đi?", o:["Xe đạp","Xe máy","Xe tăng","Xe lu"], c:2}, // Xe tăng (chiến đấu/tăng lên)
-    {q:"Cái gì người mua biết, người bán biết, người dùng không biết?", o:["Quan tài","Thuốc","Bí mật","Vàng"], c:0}
+    {q:"1 kg sắt và 1 kg bông, cái nào nặng hơn?", o:["Sắt (Trọng lượng riêng lớn hơn)","Bông (Thể tích lớn hơn)","Bằng nhau (Đều là 1kg)","Tùy vào lực hút Trái Đất"], c:2},
+    {q:"Tháng nào trong năm có 28 ngày?", o:["Chỉ có Tháng 2","Tháng 2 (Năm không nhuận)","Tất cả các tháng","Tháng 2 và các tháng chẵn"], c:2},
+    {q:"Mặt trời mọc hướng Đông, lặn hướng Tây. Vậy sao Kim mọc hướng nào?", o:["Hướng Đông","Hướng Tây","Hướng Nam","Hướng Bắc"], c:1}, // Sao Kim quay ngược chiều
+    {q:"Bánh chưng hình gì?", o:["Hình vuông (Tượng trưng Đất)","Hình hộp chữ nhật","Hình lập phương","Hình tròn (Tượng trưng Trời)"], c:0}, // Thực tế là vuông
+    {q:"Cái gì tay trái cầm được còn tay phải thì không?", o:["Khuỷu tay trái","Khuỷu tay phải","Cổ tay trái","Lòng bàn tay trái"], c:1},
+    {q:"Khi bắn súng người ta nhắm mắt nào?", o:["Mắt trái","Mắt phải","Nhắm một mắt (bất kỳ)","Mở cả 2 để quan sát"], c:2},
+    {q:"Con gì đập thì sống, không đập thì chết?", o:["Con quay (Beyblade)","Con tim","Con cá đang bơi","Con lật đật"], c:1},
+    {q:"Sông gì không có nước?", o:["Sông Hồng (Mùa cạn)","Sông Ngân Hà","Sông Cửu Long","Sông Tiền"], c:1},
+    {q:"Xe nào không bao giờ giảm đi?", o:["Xe khách","Xe buýt","Xe tăng (Tăng lên)","Xe đạp"], c:2}, 
+    {q:"Cái gì người mua biết, người bán biết, người dùng không bao giờ nhìn thấy?", o:["Bí mật quốc gia","Hộp đen máy bay","Quan tài","Lương của vợ"], c:2}
 ];
 
-// Level 2: Khó/Hack não/Logic bựa (Dùng cho câu 7-15)
+// Level 2: Hack não & Đáp án bẫy cực mạnh (Câu 7-15)
 const DB_HARD = [
-    {q:"Ba của Mary có 5 con: Nana, Nene, Nini, Nono. Người thứ 5 tên gì?", o:["Nunu","Mary","Mimi","Nina"], c:1},
-    {q:"Ngày kia của ngày hôm qua là ngày gì nếu hôm nay là Thứ Hai?", o:["Thứ Hai","Thứ Ba","Chủ Nhật","Thứ Tư"], c:0},
-    {q:"Làm sao để có con cua 9 chân?", o:["Luộc lên","Cắt bớt","Gắn thêm","Tìm con đột biến"], c:0}, // Cua chín
-    {q:"0 chia cho mấy thì bằng 2?", o:["0","1","2","Không số nào"], c:3},
-    {q:"Đỉnh núi cao nhất thế giới trước khi Everest được tìm ra?", o:["K2","Fansipan","Everest","Phú Sĩ"], c:2}, // Vẫn là Everest
-    {q:"Cái gì của bạn nhưng người khác dùng nhiều hơn?", o:["Tiền","Tên","Vợ/Chồng","Xe"], c:1},
-    {q:"Từ nào 100% người Việt phát âm sai?", o:["Sai","Đúng","Lỗi","Ngọng"], c:0},
-    {q:"Gia đình 5 anh trai, mỗi người có 1 em gái. Nhà có mấy người con?", o:["6","10","5","11"], c:0},
-    {q:"Bút + Tẩy = 11k. Bút đắt hơn Tẩy 10k. Giá cái Tẩy?", o:["1k","500đ","1.5k","2k"], c:1}, // Bút 10.5, Tẩy 0.5
-    {q:"Con gì đầu dê mình ốc?", o:["Con dốc","Con quái vật","Con dê","Con ốc"], c:0},
-    {q:"Một người đi dưới mưa không đội mũ, không ô mà tóc không ướt?", o:["Chạy nhanh","Mặc áo mưa","Bị hói","Đi ô tô"], c:2},
-    {q:"Sở thú bị cháy, con gì chạy ra đầu tiên?", o:["Con chim","Con hổ","Con người","Con voi"], c:2},
-    {q:"Cái gì càng nhiều lỗ càng nhẹ?", o:["Miếng xốp","Cái lưới","Pho mát","Cục bông"], c:0},
-    {q:"Bạn đang đứng thứ 2, bạn vượt qua người thứ 2. Bạn đứng thứ mấy?", o:["Nhất","Nhì","Ba","Tư"], c:1},
-    {q:"Có 10 ngón tay trong 1 cái hộp. Đó là gì?", o:["Hộp quà","Găng tay","Xác ướp","Thùng rác"], c:1},
-    {q:"Quần gì rộng nhất?", o:["Quần bò","Quần đảo","Quần xã","Quần đùi"], c:1},
-    {q:"Lịch nào dài nhất?", o:["Lịch Vạn Niên","Lịch sử","Lịch treo tường","Lịch trình"], c:1}
+    {q:"Ba của Mary có 5 con: Nana, Nene, Nini, Nono. Người thứ 5 tên gì?", o:["Nunu (Theo quy luật)","Nina (Tên phổ biến)","Mary","Ba của Mary"], c:2},
+    {q:"Nếu hôm nay là Thứ Hai, thì ngày mai của ngày hôm qua là ngày gì?", o:["Thứ Hai","Thứ Ba","Chủ Nhật","Thứ Tư"], c:0},
+    {q:"Làm sao để có con cua 9 chân?", o:["Tìm con đột biến gen","Luộc nó lên (Chín chân)","Cắt bớt 1 chân","Gắn thêm chân giả"], c:1},
+    {q:"0 chia cho mấy thì bằng 2?", o:["0","2","1","Không có số nào"], c:3},
+    {q:"Đỉnh núi cao nhất thế giới trước khi Everest được tìm ra?", o:["Đỉnh K2 (Cao thứ 2)","Đỉnh Kangchenjunga","Vẫn là Everest","Chưa có đỉnh nào"], c:2},
+    {q:"Từ nào 100% người Việt phát âm sai?", o:["Từ 'Sai'","Từ 'Nghiêng'","Từ 'Ngọng'","Từ 'Lỗi'"], c:0},
+    {q:"Gia đình 5 anh trai, mỗi người có 1 em gái. Nhà có mấy người con?", o:["6 người","10 người (5 trai 5 gái)","11 người","5 người"], c:0},
+    {q:"Bút + Tẩy = 11k. Bút đắt hơn Tẩy 10k. Giá cái Tẩy?", o:["1k (11-10=1)","500đ","1.5k","2k"], c:1}, // Bút 10.5, Tẩy 0.5
+    {q:"Một người đi dưới mưa không đội mũ, không ô mà tóc không ướt?", o:["Do đi quá nhanh","Do mặc áo mưa trùm đầu","Do người đó bị hói","Do trời mưa bóng mây"], c:2},
+    {q:"Sở thú bị cháy, con gì chạy ra đầu tiên?", o:["Con Voi (To nhất)","Con Báo (Nhanh nhất)","Con Người","Con Chim (Bay ra)"], c:2},
+    {q:"Bạn đang đứng thứ 2, bạn vượt qua người thứ 2. Bạn đứng thứ mấy?", o:["Thứ Nhất (Vô địch)","Thứ Hai","Thứ Ba","Thứ Tư"], c:1},
+    {q:"Có 10 ngón tay trong 1 cái hộp. Đó là gì?", o:["Hộp đựng ngón tay giả","Đôi găng tay","Một vụ án mạng","Hộp quà bí ẩn"], c:1},
+    {q:"Tháng nào ngắn nhất trong năm?", o:["Tháng 2 (Ít ngày nhất)","Tháng 5 (Tên ngắn nhất)","Tháng Ba (Ba ngã Tư)","Tháng Tư"], c:2}, // "Ba" chỉ có 2 chữ cái
+    {q:"Cái gì thuộc về bạn nhưng người khác dùng nhiều hơn?", o:["Tiền bạc","Tên của bạn","Điện thoại","Thời gian"], c:1}
 ];
 
 /* ================= GAME LOGIC ================= */
 const game = {
     user: { name: "", gender: "bạn" },
     currentQ: 0,
-    score: 0,
-    timer: 15,
-    interval: null,
     questions: [],
     lifelines: { '5050': true, 'phone': true, 'audience': true, 'expert': true },
     isPaused: false,
+    timer: 15,
+    interval: null,
 
     start() {
         const name = document.getElementById('inp-name').value.trim();
         if (!name) { alert("Nhập cái tên vào đi bạn ơi, đừng lười!"); return; }
         
-        // 1. Phân tích tên & giới tính để Troll sau này
         this.user.name = name;
         this.detectGender(name);
-
-        // 2. Tạo bộ câu hỏi thông minh (Không trùng lặp)
         this.questions = this.generateSmartPack();
-
-        // 3. Reset trạng thái
         this.currentQ = 0;
         this.lifelines = { '5050': true, 'phone': true, 'audience': true, 'expert': true };
         this.resetUI();
@@ -163,33 +153,26 @@ const game = {
         this.loadQuestion();
     },
 
-    // Logic: Kiểm tra localStorage để lấy câu chưa chơi
     generateSmartPack() {
         let played = JSON.parse(localStorage.getItem('nct_played_ids') || '[]');
         
-        // Hàm lấy câu hỏi chưa chơi
         const getUnused = (pool, count) => {
             let unused = pool.filter(q => !played.includes(q.q));
-            // Nếu hết câu chưa chơi, thì reset (tái chế) để chơi lại từ đầu
             if (unused.length < count) {
-                played = []; // Xóa lịch sử
+                played = []; 
                 localStorage.setItem('nct_played_ids', '[]');
                 unused = pool;
             }
             return unused.sort(() => Math.random() - 0.5).slice(0, count);
         };
 
-        // Lấy 6 câu Dễ + 9 câu Khó
-        const packEasy = getUnused(DB_EASY, 6);
-        const packHard = getUnused(DB_HARD, 9);
-        
-        return [...packEasy, ...packHard];
+        return [...getUnused(DB_EASY, 6), ...getUnused(DB_HARD, 9)];
     },
 
     detectGender(name) {
         const n = name.toLowerCase();
-        const male = ['hùng','cường','nam','tuấn','đạt','sơn','trung','dũng','minh','quang'];
-        const female = ['lan','hoa','huệ','trang','linh','thảo','vy','hằng','tuyết','nhung'];
+        const male = ['hùng','cường','nam','tuấn','đạt','sơn','trung','dũng','minh','quang','khánh','duy'];
+        const female = ['lan','hoa','huệ','trang','linh','thảo','vy','hằng','tuyết','nhung','phương','hà'];
         
         if (male.some(k => n.includes(k))) this.user.gender = "anh trai";
         else if (female.some(k => n.includes(k))) this.user.gender = "chị gái";
@@ -202,14 +185,12 @@ const game = {
         const qData = this.questions[this.currentQ];
         const qNum = this.currentQ + 1;
 
-        // Lưu câu hỏi vào lịch sử đã chơi
         let played = JSON.parse(localStorage.getItem('nct_played_ids') || '[]');
         if(!played.includes(qData.q)) {
             played.push(qData.q);
             localStorage.setItem('nct_played_ids', JSON.stringify(played));
         }
 
-        // Cập nhật UI
         this.timer = 15;
         document.getElementById('timer').innerText = this.timer;
         document.getElementById('level-indicator').innerText = `CÂU ${qNum}/15`;
@@ -222,7 +203,7 @@ const game = {
         qData.o.forEach((opt, idx) => {
             const btn = document.createElement('div');
             btn.className = 'option';
-            btn.innerHTML = `<b>${String.fromCharCode(65+idx)}.</b> ${opt}`;
+            btn.innerHTML = `<b style="color:var(--gold);margin-right:10px">${String.fromCharCode(65+idx)}.</b> ${opt}`;
             btn.onclick = () => this.checkAnswer(idx);
             grid.appendChild(btn);
         });
@@ -239,7 +220,6 @@ const game = {
     },
 
     updateLifelineLocks(qNum) {
-        // Lock Audience (Mở ở câu 10)
         const btnAud = document.getElementById('btn-audience');
         if(qNum < 10) {
             btnAud.classList.add('locked');
@@ -249,7 +229,6 @@ const game = {
             btnAud.onclick = () => this.useLife('audience');
         }
 
-        // Lock Expert (Mở ở câu 14)
         const btnExp = document.getElementById('btn-expert');
         if(qNum < 14) {
             btnExp.classList.add('locked');
@@ -267,7 +246,6 @@ const game = {
         document.getElementById('options').style.pointerEvents = 'none';
 
         if(idx === qData.c) {
-            // Đúng
             opts[idx].classList.add('correct');
             setTimeout(() => {
                 this.currentQ++;
@@ -275,35 +253,32 @@ const game = {
                 else this.loadQuestion();
             }, 1000);
         } else {
-            // Sai
             opts[idx].classList.add('wrong');
             opts[qData.c].classList.add('correct');
             setTimeout(() => this.gameOver(false), 2000);
         }
     },
 
-    // ============= TROLL LOGIC KHI THUA =============
     gameOver(isTimeout) {
         const { name, gender } = this.user;
         const qNum = this.currentQ + 1;
         let title = isTimeout ? "🐢 HẾT GIỜ RỒI" : "❌ TOANG RỒI";
         let msg = "";
 
-        // Tạo câu troll dựa trên thời điểm thua
         if (qNum <= 5) {
-            msg = `Trời ơi ${name} ơi! Câu dễ thế này mà cũng sai á?<br>
-                   ${gender} có muốn quay về học lại mẫu giáo không? 🤣<br>
-                   <b>(Thua tại câu ${qNum} - Mức: Sơ Sinh)</b>`;
+            msg = `Trời đất ơi ${name} ơi! Câu sơ sinh thế này mà cũng chọn sai được á?<br>
+                   ${gender} làm tôi thất vọng quá đi thôi! 🤣<br>
+                   <b>(Thua tại câu ${qNum} - Rank: Gà Mờ)</b>`;
         } else if (qNum <= 10) {
             msg = `Non và xanh lắm ${name} à!<br>
-                   Định vượt ải nhưng dòng đời xô đẩy đúng không?<br>
-                   Thôi đừng cay cú nhé ${gender}! 😜<br>
-                   <b>(Thua tại câu ${qNum} - Mức: Tập Sự)</b>`;
+                   Định vượt ải nhưng cuộc đời này toàn cú lừa thôi.<br>
+                   Đừng cay cú nhé ${gender}! 😜<br>
+                   <b>(Thua tại câu ${qNum} - Rank: Tập Sự)</b>`;
         } else if (qNum < 15) {
             msg = `Đau! Quá đau cho đội bán cau!<br>
-                   ${name} đã đi rất xa nhưng xui thôi.<br>
-                   Tí nữa thì thành huyền thoại rồi!<br>
-                   <b>(Thua tại câu ${qNum} - Mức: Cao Thủ)</b>`;
+                   ${name} đã đi rất xa nhưng xui xẻo thôi.<br>
+                   Chút xíu nữa là thành huyền thoại rồi!<br>
+                   <b>(Thua tại câu ${qNum} - Rank: Cao Thủ)</b>`;
         }
 
         this.showEndScreen(title, msg);
@@ -322,16 +297,20 @@ const game = {
     showEndScreen(title, msg) {
         document.getElementById('screen-play').classList.add('hidden');
         document.getElementById('screen-start').classList.remove('hidden');
+        // Reset giao diện start screen để hiện thông báo thua
         const startDiv = document.getElementById('screen-start');
         startDiv.innerHTML = `
-            <h1 style="color:var(--wrong)">${title}</h1>
-            <div style="font-size:1.1em; margin:20px; line-height:1.5; color:#ddd">${msg}</div>
-            <button class="btn-main" onclick="location.reload()">Chơi lại cho đỡ cay</button>
-            <div style="margin-top:20px; font-size:0.8em; color:#666">Mini game by NCT</div>
+            <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+                <h1 style="color:var(--wrong); font-size:2em">${title}</h1>
+                <div style="font-size:1.1em; margin:20px; line-height:1.5; color:#ddd">${msg}</div>
+                <button class="btn-main" onclick="location.reload()">Chơi lại cho đỡ cay</button>
+            </div>
+            <div class="intro-text">
+                Mini game by NCT<br>Chúc bạn may mắn lần sau!
+            </div>
         `;
     },
 
-    // ============= HELPERS =============
     useLife(type) {
         if(!this.lifelines[type]) return;
         const btn = document.getElementById('btn-'+type);
@@ -344,31 +323,30 @@ const game = {
 
         const qData = this.questions[this.currentQ];
         const correctChar = String.fromCharCode(65 + qData.c);
-        
         let title = "", content = "";
 
         switch(type) {
             case '5050':
-                this.isPaused = false; // 5050 k cần pause
+                this.isPaused = false;
                 const wrong = [0,1,2,3].filter(x => x !== qData.c);
                 const remove = wrong.sort(()=>Math.random()-.5).slice(0,2);
                 document.querySelectorAll('.option').forEach((el, i) => {
                     if(remove.includes(i)) el.classList.add('hidden-50');
                 });
-                return; // Thoát luôn
+                return;
             case 'phone':
                 title = "📞 GỌI NGƯỜI THÂN";
                 const rd = Math.random();
-                if(rd > 0.3) content = `Alo ${this.user.name} à? Bố vừa tra Google xong, đáp án là <b>${correctChar}</b> nhé. Sai bố chịu!`;
-                else content = `Tút... tút... Thuê bao quý khách vừa gọi hiện đang ngủ, vui lòng tự lực cánh sinh! (Đen thôi)`;
+                if(rd > 0.4) content = `Alo ${this.user.name} à? Bố vừa tra ChatGPT xong, nó bảo đáp án là <b>${correctChar}</b>. Tin hay không tùy con!`;
+                else content = `Tút... tút... Thuê bao quý khách vừa gọi hiện đang bận đi nhậu, vui lòng tự chọn bừa! (Đen thôi)`;
                 break;
             case 'audience':
                 title = "👥 KHÁN GIẢ TRƯỜNG QUAY";
-                content = `98% khán giả trong trường quay đều chọn đáp án <b>${correctChar}</b>.<br>Họ bảo ai chọn khác là "người ngoài hành tinh"!`;
+                content = `98% khán giả (toàn giáo sư) đều chọn đáp án <b>${correctChar}</b>.<br>Họ bảo ai chọn khác là "người sao Hỏa"!`;
                 break;
             case 'expert':
                 title = "🧙 TỔ TƯ VẤN CẤP CAO";
-                content = `<b>GS. Xoay:</b> "Tôi đã nghiên cứu vấn đề này 30 năm. Chắc chắn là <b>${correctChar}</b>."<br><b>TS. Biết Tuốt:</b> "Đồng ý!"`;
+                content = `<b>GS. Xoay:</b> "Tôi thề danh dự là <b>${correctChar}</b>."<br><b>TS. Biết Tuốt:</b> "Không đúng tôi đi đầu xuống đất!"`;
                 break;
         }
         this.showOverlay(title, content);
