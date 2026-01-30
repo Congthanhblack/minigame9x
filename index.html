@@ -54,15 +54,15 @@
 
 <div class="box">
     <div id="screen-start">
-        <h1>🧠 15 CÂU SINH TỬ</h1>
+        <h1>🧠 15 CÂU HẠI NÃO</h1>
         <div class="input-group">
             <input type="text" id="inp-name" placeholder="Nhập tên bạn (VD: Linh)" autocomplete="off" onkeypress="handleEnter(event)">
         </div>
         <div class="rule-list" style="color:#ccc; font-size:0.9em; line-height:1.6; margin-bottom:20px; background:rgba(255,255,255,0.05); padding:15px; border-radius:10px;">
             💎 <b>LUẬT CHƠI MỚI:</b><br>
+            • Toàn bộ là câu đố mẹo & đố vui.<br>
             • 4 quyền trợ giúp cực mạnh.<br>
-            • Dùng trợ giúp = 99% Qua màn.<br>
-            • <b>20 giây</b> suy nghĩ.<br>
+            • <b>20 giây</b> suy nghĩ mỗi câu.<br>
             • Vượt qua câu 15 để thành Huyền Thoại.
         </div>
         <button class="btn" onclick="game.start()">CHIẾN NGAY</button>
@@ -104,58 +104,58 @@
 </div>
 
 <script>
-/* ================== DATABASE (80 CÂU) ================== */
+/* ================== DATABASE MỚI (ĐỐ MẸO & HẠI NÃO) ================== */
 const DB = [
-    // EASY (Mẹo & Kiến thức cơ bản)
-    {l:"easy", q:"Tháng nào ngắn nhất trong năm?", o:["Tháng 5","Tháng 2","Tháng 12","Tháng 10"], c:1},
-    {l:"easy", q:"Con gì càng to càng nhỏ?", o:["Con cua","Con voi","Con kiến","Con dốc"], c:0},
-    {l:"easy", q:"Bánh chưng hình gì?", o:["Tròn","Vuông","Tam giác","Chữ nhật"], c:1},
-    {l:"easy", q:"Mặt trời mọc hướng nào?", o:["Tây","Nam","Bắc","Đông"], c:3},
-    {l:"easy", q:"Xe máy có mấy bánh?", o:["1","2","3","4"], c:1},
-    {l:"easy", q:"Cái gì đi lên mà không bao giờ đi xuống?", o:["Mưa","Tuổi","Cầu thang","Giá xăng"], c:1},
-    {l:"easy", q:"Thủ đô của Việt Nam?", o:["Sài Gòn","Đà Nẵng","Hà Nội","Huế"], c:2},
-    {l:"easy", q:"Ai là tác giả Truyện Kiều?", o:["Nguyễn Khuyến","Nguyễn Du","Tố Hữu","Xuân Diệu"], c:1},
-    {l:"easy", q:"1 tá là bao nhiêu cái?", o:["10","12","100","20"], c:1},
-    {l:"easy", q:"Lá cờ Việt Nam có màu gì?", o:["Xanh","Đỏ","Vàng","Tím"], c:1},
-    {l:"easy", q:"Cá heo là loài gì?", o:["Cá","Thú","Chim","Bò sát"], c:1},
-    {l:"easy", q:"Số 0 La Mã viết là?", o:["O","Z","Không có","X"], c:2},
-    {l:"easy", q:"Con gà có mấy chân?", o:["1","2","4","0"], c:1},
-    {l:"easy", q:"Tháng 2 năm nhuận có mấy ngày?", o:["28","29","30","31"], c:1},
-    {l:"easy", q:"Đỉnh núi cao nhất Việt Nam?", o:["Bà Đen","Fansipan","Ngọc Linh","Langbiang"], c:1},
-    {l:"easy", q:"Biển số 29 là ở đâu?", o:["Hà Nội","TP.HCM","Đà Nẵng","Hải Phòng"], c:0},
-    {l:"easy", q:"Nước nào có diện tích nhỏ nhất thế giới?", o:["Monaco","Vatican","Singapore","Nauru"], c:1},
-    {l:"easy", q:"Google là công ty của nước nào?", o:["Anh","Mỹ","Trung Quốc","Nhật"], c:1},
-    {l:"easy", q:"Loài vật nào được gọi là chúa sơn lâm?", o:["Hổ","Sư tử","Voi","Gấu"], c:0},
-    {l:"easy", q:"Quả gì 5 múi 4 khe?", o:["Quả khế","Quả cam","Quả cau","Quả đất"], c:0},
-    
-    // MEDIUM
-    {l:"medium", q:"Sông nào dài nhất thế giới?", o:["Amazon","Nile","Mê Kông","Dương Tử"], c:1},
-    {l:"medium", q:"Tác giả bài 'Tiến Quân Ca'?", o:["Phạm Tuyên","Văn Cao","Trịnh Công Sơn","Hoàng Việt"], c:1},
-    {l:"medium", q:"Đàn bầu có mấy dây?", o:["1 dây","2 dây","3 dây","6 dây"], c:0},
-    {l:"medium", q:"World Cup 2022 tổ chức ở đâu?", o:["Nga","Qatar","Pháp","Brazil"], c:1},
-    {l:"medium", q:"Khí nào duy trì sự cháy?", o:["Nitơ","Oxy","Hydro","Cacbonic"], c:1},
-    {l:"medium", q:"Ai tìm ra Châu Mỹ?", o:["Colombo","Magellan","Cook","Vasco da Gama"], c:0},
-    {l:"medium", q:"Tòa tháp cao nhất thế giới hiện nay?", o:["Landmark 81","Burj Khalifa","Shanghai Tower","Eiffel"], c:1},
-    {l:"medium", q:"Quốc gia nào hình chiếc ủng?", o:["Pháp","Ý","Anh","Tây Ban Nha"], c:1},
-    {l:"medium", q:"Thành phố hoa phượng đỏ?", o:["Hải Phòng","Hà Nội","Đà Nẵng","Cần Thơ"], c:0},
-    {l:"medium", q:"Hành tinh nào gần Mặt Trời nhất?", o:["Sao Kim","Sao Thủy","Sao Hỏa","Trái Đất"], c:1},
-    {l:"medium", q:"Đơn vị đo cường độ dòng điện?", o:["Vôn","Ampe","Oát","Joule"], c:1},
-    {l:"medium", q:"Loài chim nào biết bay lùi?", o:["Đà điểu","Chim ruồi","Đại bàng","Chim sẻ"], c:1},
-    {l:"medium", q:"Kim tự tháp Giza ở đâu?", o:["Ai Cập","Mexico","Ấn Độ","Peru"], c:0},
-    {l:"medium", q:"Tắt Đèn là của ai?", o:["Nam Cao","Ngô Tất Tố","Vũ Trọng Phụng","Tô Hoài"], c:1},
-    {l:"medium", q:"Cầu thủ bóng đá nào có biệt danh El Pulga?", o:["Ronaldo","Messi","Neymar","Mbappe"], c:1},
+    // EASY (Khởi động nhẹ nhàng)
+    {l:"easy", q:"Cắm vào run rẩy toàn thân / Rút ra nước chảy từ chân xuống sàn... Là cái gì?", o:["Cái tủ lạnh", "Cái máy bơm", "Cái điều hòa", "Cái bàn ủi"], c:0},
+    {l:"easy", q:"Ở Việt Nam, rồng bay ở đâu và đáp ở đâu?", o:["Bay ở Hà Nội, đáp ở Quảng Ninh", "Bay ở Thăng Long, đáp ở Hạ Long", "Bay ở Huế, đáp ở Đà Nẵng", "Bay ở trời, đáp ở đất"], c:1},
+    {l:"easy", q:"Cô nào mà tất cả mọi người đều sợ, không chỉ riêng học sinh?", o:["Cô giáo", "Cô đơn", "Cô Vy (Corona)", "Cô hồn"], c:2},
+    {l:"easy", q:"Cái gì 2 lỗ: có gió thì sống, không gió thì chết?", o:["Lỗ tai", "Lỗ mũi", "Cửa sổ", "Ống sáo"], c:1},
+    {l:"easy", q:"Nhà nào lạnh lẽo nhưng ai cũng muốn tới?", o:["Nhà xác", "Nhà đá", "Nhà băng (Ngân hàng)", "Nhà ma"], c:2},
+    {l:"easy", q:"Quả gì ai cũng sợ ăn trúng?", o:["Quả tạ", "Quả báo", "Quả đấm", "Quả bom"], c:1},
+    {l:"easy", q:"Cái gì càng cất lại càng thấy?", o:["Tiền", "Cất nhà", "Cất rượu", "Bí mật"], c:1},
+    {l:"easy", q:"Con gì dài và cứng nhất?", o:["Con trăn", "Con đường", "Con lươn", "Con tàu"], c:1},
+    {l:"easy", q:"Con gì sinh ra đạo đức đã không tốt?", o:["Con cáo", "Con lừa", "Con báo", "Con quỷ"], c:1},
+    {l:"easy", q:"Gà trống và gà mái thi bơi, con nào thắng?", o:["Gà trống", "Gà mái", "Hòa nhau", "Gà không biết bơi"], c:3},
+    {l:"easy", q:"Tháng nào con người ngủ ít nhất trong năm?", o:["Tháng 1", "Tháng 2 (Ít ngày nhất)", "Tháng 7", "Tháng 12"], c:1},
+    {l:"easy", q:"Tí có 5 kẹo chia đều cho 5 bạn. Hỏi Tí còn mấy cái?", o:["1 cái", "0 cái", "5 cái", "2 cái"], c:1},
+    {l:"easy", q:"Trên lông dưới lông / Tối lồng vào nhau... Là gì?", o:["Đôi mắt", "Miệng", "Bàn tay", "Cái kẹp tóc"], c:0},
+    {l:"easy", q:"Cái gì của chồng mà vợ thích cầm nhất (đừng nghĩ bậy)?", o:["Tay", "Tiền", "Điện thoại", "Chìa khóa xe"], c:1},
+    {l:"easy", q:"Con gì mang được miếng gỗ lớn nhưng không mang được hòn sỏi?", o:["Con voi", "Con kiến", "Con sông", "Con cá"], c:2},
 
-    // HARD
-    {l:"hard", q:"Số nào vừa là số chính phương vừa là lập phương?", o:["16","64","81","100"], c:1},
-    {l:"hard", q:"Hành tinh nào quay ngược chiều kim đồng hồ?", o:["Sao Thủy","Sao Kim","Sao Hỏa","Sao Mộc"], c:1},
-    {l:"hard", q:"Quốc gia nào có nhiều múi giờ nhất?", o:["Nga","Mỹ","Pháp","Trung Quốc"], c:2},
-    {l:"hard", q:"Giải Nobel không có lĩnh vực nào?", o:["Toán học","Văn học","Hòa bình","Vật lý"], c:0},
-    {l:"hard", q:"Vị vua trị vì ngắn nhất sử Việt?", o:["Dục Đức","Hiệp Hòa","Kiến Phúc","Đồng Khánh"], c:0},
-    {l:"hard", q:"Biển nào mặn nhất thế giới?", o:["Biển Đỏ","Biển Chết","Biển Đen","Biển Đông"], c:1},
-    {l:"hard", q:"Ngôn ngữ lập trình C ra đời năm nào?", o:["1969","1972","1980","1991"], c:1},
-    {l:"hard", q:"Ai là người đầu tiên bay vào vũ trụ?", o:["Armstrong","Gagarin","Aldrin","Phạm Tuân"], c:1},
-    {l:"hard", q:"Tên cũ của Thái Lan?", o:["Miến Điện","Xiêm","Champa","Lào"], c:1},
-    {l:"hard", q:"Ngày hạ chí ở bán cầu Bắc?", o:["21/3","21/6","23/9","22/12"], c:1}
+    // MEDIUM (Bắt đầu hack não)
+    {l:"medium", q:"Rổ có 3 quả táo, chia cho 3 người mỗi người 1 quả mà vẫn còn 1 quả trong rổ?", o:["Chia sai", "1 người lấy nguyên cả rổ", "Quả táo giả", "Ảo thuật"], c:1},
+    {l:"medium", q:"Môn thể thao nào có cả vua lẫn hoàng hậu?", o:["Bóng đá", "Cờ tướng", "Cờ vua", "Bài tây"], c:2},
+    {l:"medium", q:"Cái gì càng thiu lại càng ngon?", o:["Cơm", "Thịt kho", "Giấc ngủ", "Rượu"], c:2},
+    {l:"medium", q:"Bánh gì ăn ít mà nhiều?", o:["Bánh bao", "Bánh đa", "Bánh ít", "Bánh xèo"], c:1},
+    {l:"medium", q:"Cái gì tay phải cầm được mà tay trái cầm không được?", o:["Cùi chỏ trái", "Cánh tay trái", "Cánh tay phải", "Lỗ tai trái"], c:1},
+    {l:"medium", q:"Trước mặt là quảng trường xanh, sau lưng là trắng. Quảng trường Đỏ ở đâu?", o:["Ở Nga", "Ở Mỹ", "Ở Pháp", "Ở Việt Nam"], c:0},
+    {l:"medium", q:"Tốc độ quy định tối đa trong thi chạy marathon là bao nhiêu?", o:["20 km/h", "30 km/h", "40 km/h", "Không giới hạn"], c:3},
+    {l:"medium", q:"Khi nào nhìn vào số 2 nhưng lại nói là 10?", o:["Nhìn đồng hồ (Kim phút)", "Nhìn lịch", "Nhìn bài thi", "Nhìn biển số xe"], c:0},
+    {l:"medium", q:"Bánh gì tròn như mặt trăng?", o:["Bánh trung thu", "Bánh xèo", "Bánh bò", "Bánh bèo"], c:1},
+    {l:"medium", q:"Cơ quan quan trọng nhất của phụ nữ là gì?", o:["Trái tim", "Bộ não", "Hội Liên Hiệp Phụ Nữ", "Dạ dày"], c:2},
+    {l:"medium", q:"Thân anh trùng trục trơn lu / Mấy em mút đến anh trào nước ra?", o:["Viên kẹo", "Mía", "Que kem", "Đá bào"], c:2},
+    {l:"medium", q:"Con gì không có xương sống mà vẫn đứng được?", o:["Con giun", "Con dốc", "Con rắn", "Con nộm"], c:1},
+    {l:"medium", q:"Cái gì 2 lỗ: có gió thì sống, không gió thì chết?", o:["Lỗ mũi", "Lỗ tai", "Cửa sổ", "Bong bóng"], c:0},
+    {l:"medium", q:"Bông gì không mọc từ cây?", o:["Bông hồng", "Bông tai", "Bông súng", "Bông cải"], c:1},
+    {l:"medium", q:"Con gì sinh ra đã được làm vua?", o:["Con sư tử", "Con cua hoàng đế", "Con rồng", "Con hổ"], c:1},
+
+    // HARD (Siêu bựa & Logic)
+    {l:"hard", q:"1 thằng mù và ba thằng điếc đi ăn phở (10k/tô). Hỏi phải trả bao nhiêu?", o:["40 ngàn", "30 ngàn", "20 ngàn (Ba của thằng điếc)", "10 ngàn"], c:2},
+    {l:"hard", q:"Nơi nào 'hôm nay' đi trước 'hôm qua' (Where does today come before yesterday)?", o:["Trong từ điển (Dictionary)", "Trong lịch", "Trong mơ", "Ở nước Úc"], c:0},
+    {l:"hard", q:"Cắt 1 khúc vải thành 100 khúc, mỗi lần cắt 5 giây. Hỏi cắt xong mất bao lâu?", o:["500 giây", "495 giây (99 lần cắt)", "490 giây", "450 giây"], c:1},
+    {l:"hard", q:"3 thằng lùn đi vào hang: cầm xô, cầm xẻng. Thằng đi đầu cầm gì?", o:["Cầm đèn", "Cầm đuốc", "Cầm đầu (Đại ca)", "Cầm tay"], c:2},
+    {l:"hard", q:"Cái gì không có chân, tay, đuôi nhưng có rất nhiều đầu?", o:["Con rồng", "Cầu truyền hình", "Đám đông", "Quái vật"], c:1},
+    {l:"hard", q:"Trò gì 5 bé hơn 2, 2 bé hơn 0 và 0 bé hơn 5?", o:["Trốn tìm", "Ô ăn quan", "Oẳn tù xì", "Đánh bài"], c:2},
+    {l:"hard", q:"Lan có 2 sách, ngày kế mẹ cho 9 sách. Mỗi ngày Lan đọc 1 quyển. Sau ngày thứ 7 Lan đọc mấy quyển?", o:["8 quyển (2 cũ + 6 ngày)", "7 quyển", "9 quyển", "11 quyển"], c:0},
+    {l:"hard", q:"Trên thon dưới phồng / Đầu đội nón đồng, khi sáng khi tối?", o:["Cây nến", "Bóng đèn", "Đom đóm", "Ngọn đuốc"], c:1},
+    {l:"hard", q:"Tròn như lá tía tô / Bước cẳng vô hồ, trong khô ngoài ướt?", o:["Cái gáo (múc nước)", "Cái thuyền", "Cái nón", "Đôi ủng"], c:0},
+    {l:"hard", q:"Lồm xồm 2 mép những lông / Ở giữa có lỗ đàn ông chui vào?", o:["Cái áo len", "Cái áo mưa (ngày xưa)", "Cái lều", "Cái hang"], c:1},
+    {l:"hard", q:"Dài như trái chuối tây / Một đầu cứng ngắc, đầu đầy lông quăn?", o:["Bàn chải", "Bắp ngô", "Cây bút", "Củ cà rốt"], c:1},
+    {l:"hard", q:"Đút vào nhè nhẹ ngoáy nghe anh / Cho em tê mê tận mây xanh?", o:["Ngoáy mũi", "Ngoáy tai", "Gãi lưng", "Xâu kim"], c:1},
+    {l:"hard", q:"Ai muốn diện kiến vua phải nói 1 câu: Thật thì chém, dối thì treo cổ. Nói câu gì để sống?", o:["Tôi sẽ bị chém", "Tôi sẽ bị treo cổ", "Tôi vô tội", "Tôi muốn gặp vua"], c:1},
+    {l:"hard", q:"Để yên nằm im thin thít / Hễ động liếm đít, chạy tứ tung?", o:["Con chó", "Con tem", "Cái xe", "Viên bi"], c:1},
+    {l:"hard", q:"Xe nào không bao giờ giảm đi?", o:["Xe đạp", "Xe máy", "Xe tăng", "Xe buýt"], c:2}
 ];
 
 /* ================== GAME LOGIC ================== */
