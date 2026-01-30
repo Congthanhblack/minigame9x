@@ -2,143 +2,315 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Mini Game 15 Câu Sinh Tử - NCT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 Câu Sinh Tử - NCT9x Master</title>
 <style>
-  body{
-    font-family: Arial, sans-serif;
-    background:#111;
-    color:#eee;
-    text-align:center;
-    padding:20px;
-  }
-  body.hard-mode{background:#220000;}
-  #game{max-width:600px;margin:auto;}
-  #q{font-size:22px;margin:20px 0;}
-  button{
-    display:block;
-    width:100%;
-    margin:8px 0;
-    padding:10px;
-    font-size:16px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-  }
-  .help-btn{background:#444;color:#fff;}
-  .help-btn.locked{opacity:.4;pointer-events:none;}
-  .note{font-style:italic;color:#ffb703;margin-bottom:10px;}
+:root{--gold:#f1c40f;--blue:#3498db;--dark:#020230;--red:#e74c3c;--green:#2ecc71;}
+body{margin:0;font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;background:var(--dark);color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;user-select:none}
+.box{width:95%;max-width:500px;background:#000;border:2px solid var(--gold);border-radius:20px;padding:20px;box-shadow:0 0 40px rgba(241,196,15,.2);position:relative}
+h1{text-align:center;color:var(--gold);margin:5px 0 20px;text-transform:uppercase;letter-spacing:1px;font-size:1.8em}
+.input-group{margin-bottom:20px;text-align:center}
+input{width:70%;padding:12px;background:#111;border:2px solid #444;color:var(--gold);border-radius:10px;font-size:1.2em;outline:none;transition:.3s;text-align:center;font-weight:bold;text-transform:capitalize}
+input:focus{border-color:var(--gold);box-shadow:0 0 15px rgba(241,196,15,.3)}
+.lifelines{display:flex;justify-content:space-between;margin-bottom:15px;padding:0 10px}
+.life-btn{background:#111;border:2px solid var(--gold);color:var(--gold);width:50px;height:50px;border-radius:50%;font-size:1.5em;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;position:relative}
+.life-btn:hover{background:var(--gold);color:#000;transform:scale(1.1)}
+.life-btn.used{filter:grayscale(1);opacity:.4;cursor:not-allowed;border-color:#555;pointer-events:none}
+.life-btn.used::after{content:'❌';position:absolute;font-size:1.2em;color:red}
+#timer{font-size:2.2em;text-align:center;font-weight:bold;color:var(--red);text-shadow:0 0 10px var(--red);margin:5px 0;font-family:monospace}
+.options-grid{display:grid;gap:10px;margin-top:15px}
+.option{padding:12px;border:1px solid var(--blue);border-radius:8px;cursor:pointer;transition:.2s;background:rgba(52,152,219,.1);display:flex;align-items:center;min-height:40px}
+.option:hover{background:rgba(52,152,219,.3);transform:translateX(5px)}
+.option.correct{background:var(--green)!important;border-color:#fff;color:#000;font-weight:bold;animation:pulse .5s}
+.option.wrong{background:var(--red)!important;border-color:#fff;opacity:.9}
+.option.hidden-50{opacity:0;pointer-events:none;visibility:hidden}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:10;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:18px;text-align:center;padding:20px;box-sizing:border-box}
+#overlay h3{color:var(--gold);margin-top:0;font-size:1.5em}
+#overlay p{font-size:1.1em;line-height:1.5;color:#fff}
+.close-btn{margin-top:20px;padding:10px 30px;background:var(--blue);border:none;color:#fff;border-radius:5px;cursor:pointer;font-weight:bold}
+.btn{width:100%;padding:14px;margin-top:20px;border-radius:8px;border:2px solid var(--gold);background:var(--gold);color:#000;font-weight:bold;cursor:pointer;transition:.3s;text-transform:uppercase;font-size:1em}
+.btn:hover{background:#fff;border-color:#fff;box-shadow:0 0 15px #fff}
+#explain{color:var(--gold);margin-top:15px;font-style:italic;text-align:center;background:rgba(255,255,255,.1);padding:10px;border-radius:8px;font-size:.9em}
+.hidden{display:none!important}
+.nct-signature{text-align:center;font-size:.75em;opacity:.6;margin-top:15px;font-style:italic;color:var(--gold)}
+.disabled{pointer-events:none}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
 </style>
 </head>
 <body>
-<div id="game">
-  <h2>🎮 15 Câu Sinh Tử - Master Mode</h2>
-  <div class="note">
-    💬 Xin chào, hôm nay bạn mệt mỏi lắm à? Vào đây giải trí chút nhé…<br>
-    Mini game này là đứa con ghẻ của NCT hihi 😆
+
+<div class="box">
+  <div id="screen-start">
+    <h1>🧠 15 CÂU SINH TỬ</h1>
+    <div class="input-group">
+      <input type="text" id="inp-name" placeholder="Nhập tên bạn (VD: Linh)" autocomplete="off" onkeypress="handleEnter(event)">
+    </div>
+    <div class="rule-list" style="color:#ccc;font-size:.9em;line-height:1.6;margin-bottom:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:10px;">
+      💎 <b>LUẬT CHƠI MASTER:</b><br>
+      • 4 quyền trợ giúp cực mạnh.<br>
+      • Dùng trợ giúp = gần như qua màn.<br>
+      • <b>15 giây</b> suy nghĩ.<br>
+      • Từ câu 7 trở lên: khó dần – nhiều bẫy logic.<br>
+      • Từ câu 13 trở lên: khóa ngẫu nhiên 1 trợ giúp.<br>
+      • Vượt qua câu 15 để thành Huyền Thoại.
+    </div>
+    <div style="color:#ffb703;font-size:.9em;margin-bottom:10px;">
+      💬 Bạn yêu à, khó thì dùng trợ giúp, khó nữa thì chịu thua – đừng có search Google, nó lại hèn ra 😆
+    </div>
+    <button class="btn" onclick="game.start()">CHIẾN NGAY</button>
+    <div class="nct-signature">
+      💬 Xin chào, hôm nay bạn mệt mỏi lắm à? Vào đây giải trí chút nhé…<br>
+      Mini game này là đứa con ghẻ của NCT hihi 😆
+    </div>
   </div>
 
-  <div id="q"></div>
-  <button id="opt0" onclick="choose(0)"></button>
-  <button id="opt1" onclick="choose(1)"></button>
-  <button id="opt2" onclick="choose(2)"></button>
-  <button id="opt3" onclick="choose(3)"></button>
+  <div id="screen-play" class="hidden">
+    <div class="lifelines">
+      <button class="life-btn" id="btn-5050" onclick="game.life5050()" title="50:50">⚖️</button>
+      <button class="life-btn" id="btn-phone" onclick="game.lifePhone()" title="Gọi người thân">📞</button>
+      <button class="life-btn" id="btn-audience" onclick="game.lifeAudience()" title="Hỏi khán giả">👥</button>
+      <button class="life-btn" id="btn-expert" onclick="game.lifeExpert()" title="Tổ tư vấn">🧙</button>
+    </div>
 
-  <div class="helps">
-    <button class="help-btn">50/50</button>
-    <button class="help-btn">Call</button>
-    <button class="help-btn">Audience</button>
-    <button class="help-btn">Skip</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;color:var(--gold);border-bottom:1px solid #333;padding-bottom:5px;">
+      <span id="player-display" style="font-weight:bold;"></span>
+      <span id="progress" style="font-size:.9em;">CÂU 1/15</span>
+    </div>
+
+    <div id="timer">15</div>
+    <p id="question" style="font-size:1.2em;text-align:center;min-height:60px;font-weight:500;margin:10px 0;"></p>
+    <div class="options-grid" id="options"></div>
+    <div id="explain" class="hidden"></div>
+  </div>
+
+  <div id="overlay" class="hidden">
+    <h3 id="overlay-title"></h3>
+    <div id="overlay-content"></div>
+    <button class="close-btn" onclick="game.closeOverlay()">ĐÃ HIỂU</button>
+  </div>
+
+  <div id="screen-result" class="hidden">
+    <h1 id="res-title" style="font-size:2em;"></h1>
+    <p id="res-msg" style="text-align:center;line-height:1.6;font-size:1.1em;padding:10px;"></p>
+    <button class="btn" onclick="location.reload()">CHƠI LẠI TỪ ĐẦU</button>
+    <div class="nct-signature">NCT9x chúc bạn may mắn lần sau ✨</div>
   </div>
 </div>
 
 <script>
-// ===== DATABASE =====
+/* ================== DATABASE (80+ – ĐA DẠNG & BẪY) ================== */
 const DB = [
-  {l:"easy", q:"Mặt trời mọc ở hướng nào?", o:["Tây","Bắc","Nam","Đông"], c:3},
-  {l:"easy", q:"Con gà có mấy chân?", o:["1","2","3","4"], c:1},
-  {l:"easy", q:"1 tá bằng bao nhiêu?", o:["10","12","20","100"], c:1},
-  {l:"easy", q:"Bánh chưng có hình gì?", o:["Tròn","Vuông","Tam giác","Chữ nhật"], c:1},
-  {l:"easy", q:"What color is the sky?", o:["Green","Blue","Red","Yellow"], c:1},
+  // EASY (5)
+  {l:"easy",q:"Mặt trời mọc hướng nào?",o:["Tây","Nam","Bắc","Đông"],c:3},
+  {l:"easy",q:"Con gà có mấy chân?",o:["1","2","3","4"],c:1},
+  {l:"easy",q:"1 tá bằng bao nhiêu?",o:["10","12","20","100"],c:1},
+  {l:"easy",q:"Bánh chưng hình gì?",o:["Tròn","Vuông","Tam giác","Chữ nhật"],c:1},
+  {l:"easy",q:"What color is the sky?",o:["Green","Blue","Red","Yellow"],c:1},
 
-  {l:"medium", q:"Cái gì tay phải cầm được mà tay trái không cầm được?", o:["Bút","Cánh tay trái","Ly","Điện thoại"], c:1},
-  {l:"medium", q:"5 chia 5 = 1. Tí có 5 kẹo chia cho 5 bạn. Tí còn mấy?", o:["0","1","5","Không biết"], c:0},
-  {l:"medium", q:"Which word is always spelled incorrectly?", o:["Wrong","Incorrectly","Bad","Error"], c:1},
-  {l:"medium", q:"Cái gì càng cất lại càng thấy?", o:["Tiền","Nhà","Cát","Rác"], c:1},
-  {l:"medium", q:"Nếu vượt người thứ 2 trong cuộc đua, bạn đứng thứ mấy?", o:["1","2","3","4"], c:1},
+  // MEDIUM (5)
+  {l:"medium",q:"Cái gì tay phải cầm được mà tay trái không cầm được?",o:["Bút","Cánh tay trái","Ly","Điện thoại"],c:1},
+  {l:"medium",q:"5 chia 5 = 1. Tí có 5 kẹo chia cho 5 bạn. Tí còn mấy?",o:["0","1","5","Không biết"],c:0},
+  {l:"medium",q:"Ở đâu hôm nay đứng trước hôm qua?",o:["Trường học","Nhà bếp","Từ điển","Công viên"],c:2},
+  {l:"medium",q:"Cái gì càng cất lại càng thấy?",o:["Tiền","Nhà","Cát","Rác"],c:1},
+  {l:"medium",q:"Nếu vượt người thứ 2 trong cuộc đua, bạn đứng thứ mấy?",o:["1","2","3","4"],c:1},
 
-  {l:"hard", q:"Nếu hôm nay là thứ Hai, thì ngày kia của ngày hôm qua là ngày gì?", o:["Thứ Hai","Thứ Ba","Chủ nhật","Thứ Tư"], c:0},
-  {l:"hard", q:"Cái gì càng lấy đi thì nó càng to?", o:["Cái hố","Cái túi","Cái nợ","Cái bụng"], c:0},
-  {l:"hard", q:"Một cây bút và cục tẩy giá 1.10$. Bút đắt hơn tẩy 1$. Bút giá?", o:["1$","1.05$","0.10$","0.55$"], c:1},
-  {l:"hard", q:"I speak without a mouth and hear without ears. I am?", o:["Echo","Shadow","Cloud","Wind"], c:0},
-  {l:"hard", q:"Nếu 1 = 5, 2 = 25, 3 = 325, 4 = 4325 thì 5 = ?", o:["54325","54321","5325","Không xác định"], c:0}
+  // HARD (5 – BOSS/BẪY)
+  {l:"hard",q:"Nếu hôm nay là Thứ Hai, ngày kia của ngày hôm qua là ngày gì?",o:["Thứ Hai","Thứ Ba","Chủ nhật","Thứ Tư"],c:0},
+  {l:"hard",q:"Cái gì càng lấy đi thì nó càng to?",o:["Cái hố","Cái túi","Cái nợ","Cái bụng"],c:0},
+  {l:"hard",q:"Bút + tẩy = 1.10$. Bút đắt hơn tẩy 1$. Giá bút?",o:["1$","1.05$","0.10$","0.55$"],c:1},
+  {l:"hard",q:"I speak without a mouth and hear without ears. I am?",o:["Echo","Shadow","Cloud","Wind"],c:0},
+  {l:"hard",q:"Nếu 1=5, 2=25, 3=325, 4=4325 thì 5=?",o:["54325","54321","5325","Không xác định"],c:0},
+
+  // BONUS – logic ngược & xã hội (để build pack đa dạng)
+  {l:"medium",q:"Từ nào 100% người Việt phát âm sai?",o:["Sai","Đúng","Lỗi","Chuẩn"],c:0},
+  {l:"medium",q:"Cái gì của bạn nhưng người khác dùng nhiều hơn?",o:["Ví","Tên","Áo","Mặt"],c:1},
+  {l:"medium",q:"Cái gì đi khắp thế giới mà vẫn nằm một chỗ?",o:["Gió","Nước","Con tem","Mây"],c:2},
+  {l:"hard",q:"Số nào tăng lên khi lật ngược?",o:["6","8","9","0"],c:0},
+  {l:"hard",q:"Có 10 ngón tay trong 1 cái hộp. Đó là gì?",o:["Hộp","Bao tay","Túi","Thùng"],c:1}
 ];
 
-// ===== UTILS =====
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+/* ================== GAME LOGIC ================== */
+const game = {
+  index:0, pack:[], timer:15, interval:null,
+  lockedIds: JSON.parse(localStorage.getItem("NCT_MASTER")||"[]"),
+  user:{name:"",gender:"other"},
+  lifelines:{'5050':true,'phone':true,'audience':true,'expert':true},
+  isPaused:false,
+
+  start(){
+    const name=document.getElementById('inp-name').value.trim();
+    if(!name){alert("Nhập tên vào đã bạn ơi!");return;}
+    this.user.name=name; this.user.gender=this.detectGender(name);
+    document.querySelectorAll('.life-btn').forEach(b=>b.classList.remove('used'));
+    this.lifelines={'5050':true,'phone':true,'audience':true,'expert':true};
+
+    this.pack=this.buildPack();
+    if(this.pack.length<15){alert("Không đủ câu hỏi. Reset DB!");return;}
+
+    document.getElementById('screen-start').classList.add('hidden');
+    document.getElementById('screen-play').classList.remove('hidden');
+    document.getElementById('player-display').innerText=`Người chơi: ${this.user.name}`;
+    this.loadQuestion();
+  },
+
+  detectGender(name){
+    const n=name.toLowerCase();
+    const males=['hùng','cường','dũng','nam','tùng','sơn','đức','thắng','minh','hiếu','huy','long','khánh','đạt','tuấn','trung','thành','quang','vinh','kiên','hoàng','phúc','lâm','khoa','việt','tài','hải','bảo'];
+    const females=['lan','mai','ly','hương','hằng','huyền','trang','thảo','vy','linh','phương','nhung','thu','thủy','hà','hiền','dung','trinh','tuyết','nhi','hân','thư','yến','quỳnh','hoa','trâm','diễm','thúy','kiều','nga','ngân','châu','anh','oanh','vân'];
+    if(males.includes(n)) return 'male';
+    if(females.includes(n)) return 'female';
+    return 'other';
+  },
+
+  buildPack(){
+    const avail=DB.filter(q=>!this.lockedIds.includes(q.q));
+    const get=(lvl,n)=>avail.filter(q=>q.l===lvl).sort(()=>Math.random()-.5).slice(0,n);
+    return [...get('easy',5),...get('medium',5),...get('hard',5)];
+  },
+
+  loadQuestion(){
+    clearInterval(this.interval); this.isPaused=false;
+    const q=this.pack[this.index]; this.timer=15;
+    document.getElementById('timer').innerText=this.timer;
+    document.getElementById('progress').innerText=`CÂU ${this.index+1}/15`;
+    document.getElementById('question').innerText=q.q;
+    document.getElementById('explain').classList.add('hidden');
+    const box=document.getElementById('options'); box.innerHTML=''; box.classList.remove('disabled');
+
+    q.o.forEach((t,i)=>{
+      const d=document.createElement('div');
+      d.className='option';
+      d.innerHTML=`<b style="color:var(--gold);margin-right:10px">${String.fromCharCode(65+i)}.</b> ${t}`;
+      d.onclick=()=>this.check(i);
+      box.appendChild(d);
+    });
+
+    // Hard mode từ câu 7+
+    if(this.index>=6){
+      document.getElementById('timer').style.color='#ff7675';
+    }
+
+    // Boss: câu 13+ khóa 1 trợ giúp
+    if(this.index>=12){
+      this.lockRandomLifeline();
+      if(this.index===12) alert("😈 BOSS MODE: Khóa ngẫu nhiên 1 trợ giúp!");
+    }
+
+    this.interval=setInterval(()=>{
+      if(!this.isPaused){
+        this.timer--; document.getElementById('timer').innerText=this.timer;
+        if(this.timer<=0) this.lose(true);
+      }
+    },1000);
+  },
+
+  lockRandomLifeline(){
+    const keys=Object.keys(this.lifelines).filter(k=>this.lifelines[k]);
+    if(keys.length===0) return;
+    const pick=keys[Math.floor(Math.random()*keys.length)];
+    this.lifelines[pick]=false;
+    const id={'5050':'btn-5050','phone':'btn-phone','audience':'btn-audience','expert':'btn-expert'}[pick];
+    document.getElementById(id).classList.add('used');
+  },
+
+  life5050(){
+    if(!this.lifelines['5050']) return;
+    this.markUsed('btn-5050','5050');
+    const q=this.pack[this.index];
+    const wrong=[0,1,2,3].filter(i=>i!==q.c).sort(()=>Math.random()-.5).slice(0,2);
+    document.querySelectorAll('.option').forEach((o,i)=>{if(wrong.includes(i))o.classList.add('hidden-50');});
+  },
+  lifePhone(){
+    if(!this.lifelines['phone']) return;
+    this.markUsed('btn-phone','phone'); this.isPaused=true;
+    const q=this.pack[this.index]; const L=String.fromCharCode(65+q.c); const A=q.o[q.c];
+    let msg="";
+    if(this.user.gender==='male') msg=`Alo đại ca à? Em tra nguồn mật rồi, chắc chắn là <b>${L}: ${A}</b> nhé!`;
+    else if(this.user.gender==='female') msg=`Chị đẹp ơi, là <b>${L}: ${A}</b> đó! Sai là em dỗi!`;
+    else msg=`Theo nguồn NASA, đáp án là <b>${L}: ${A}</b> nha!`;
+    this.showOverlay("📞 NGƯỜI THÂN MÁCH NƯỚC",msg);
+  },
+  lifeAudience(){
+    if(!this.lifelines['audience']) return;
+    this.markUsed('btn-audience','audience'); this.isPaused=true;
+    const q=this.pack[this.index]; let stats=[0,0,0,0];
+    stats[q.c]=Math.floor(Math.random()*10)+85; let remain=100-stats[q.c];
+    for(let i=0;i<4;i++){if(i!==q.c){let v=Math.floor(Math.random()*remain);stats[i]=v;remain-=v;}}
+    let html=`<div style="display:flex;justify-content:space-around;align-items:flex-end;height:150px;margin-top:20px;">`;
+    stats.forEach((v,i)=>{const isC=i===q.c;html+=`
+      <div style="width:40px;text-align:center;">
+        <div style="height:${v}px;background:${isC?'var(--green)':'#555'};margin:0 auto;width:20px;border-radius:3px 3px 0 0;"></div>
+        <div style="margin-top:5px;font-weight:bold;">${String.fromCharCode(65+i)}</div>
+        <div style="font-size:.8em;color:${isC?'var(--green)':'#aaa'}">${v}%</div>
+      </div>`;});
+    html+=`</div>`;
+    this.showOverlay("👥 Ý KIẾN KHÁN GIẢ",`Khán giả bình chọn:<br>${html}`);
+  },
+  lifeExpert(){
+    if(!this.lifelines['expert']) return;
+    this.markUsed('btn-expert','expert'); this.isPaused=true;
+    const q=this.pack[this.index]; const L=String.fromCharCode(65+q.c);
+    const c=`
+      <div style="text-align:left;background:rgba(255,255,255,.1);padding:10px;border-radius:5px;margin-bottom:5px;">
+        🧔 <b>GS. Xoay:</b> "Chắc chắn là <b>${L}</b>."
+      </div>
+      <div style="text-align:left;background:rgba(255,255,255,.1);padding:10px;border-radius:5px;">
+        👩‍🏫 <b>TS. NCT:</b> "Đồng ý! Chọn <b>${L}</b> là qua màn."
+      </div>`;
+    this.showOverlay("🧙 TỔ TƯ VẤN",c);
+  },
+  markUsed(id,key){document.getElementById(id).classList.add('used');this.lifelines[key]=false;},
+  showOverlay(t,c){document.getElementById('overlay').classList.remove('hidden');document.getElementById('overlay-title').innerHTML=t;document.getElementById('overlay-content').innerHTML=c;},
+  closeOverlay(){document.getElementById('overlay').classList.add('hidden');this.isPaused=false;},
+
+  check(i){
+    clearInterval(this.interval);
+    const q=this.pack[this.index];
+    const opts=document.querySelectorAll('.option');
+    document.getElementById('options').classList.add('disabled');
+    if(i===q.c){
+      opts[i].classList.add('correct'); this.index++;
+      setTimeout(()=>{ if(this.index===15) this.win(); else this.loadQuestion(); },1000);
+    }else{
+      opts[i].classList.add('wrong'); opts[q.c].classList.add('correct');
+      this.saveProgress(); setTimeout(()=>this.lose(false),2000);
+    }
+  },
+  saveProgress(){
+    const passed=this.pack.slice(0,this.index).map(q=>q.q);
+    this.lockedIds=[...new Set([...this.lockedIds,...passed])];
+    localStorage.setItem("NCT_MASTER",JSON.stringify(this.lockedIds));
+  },
+  lose(timeout){
+    const p=this.getPronoun(), n=this.user.name;
+    let msg="";
+    if(this.index<5){
+      msg=this.user.gender==='male'?`Đại ca ${n} ơi! Câu dễ mà cũng trượt 😅`:
+          this.user.gender==='female'?`Chị ${n} xinh mà lỡ tay rồi! 💄`:`Trẻ con cũng biết mà ${n} lại sai ư?`;
+    }else if(this.index<10){
+      msg=timeout?`Hết giờ rồi ${p} ${n} ơi!`:`Sai một ly đi một dặm. ${p} ${n} bình tĩnh hơn nhé!`;
+    }else msg=`Tiếc quá! ${p} ${n} suýt thành Huyền Thoại rồi.`;
+    this.endScreen(timeout?"⌛ HẾT GIỜ":"💀 GAME OVER",msg);
+  },
+  win(){
+    this.saveProgress(); const n=this.user.name;
+    let msg=this.user.gender==='male'?`Đỉnh cao! Đại ca ${n} là giáo sư biết tuốt 🏆`:
+            this.user.gender==='female'?`Nữ thần ${n} vừa xinh vừa giỏi 👑`:
+            `15/15! Bạn ${n} là bộ não thiên tài!`;
+    this.endScreen("👑 HUYỀN THOẠI",msg);
+  },
+  getPronoun(){return this.user.gender==='male'?'anh':this.user.gender==='female'?'chị':'bạn';},
+  endScreen(t,m){
+    clearInterval(this.interval);
+    document.getElementById('screen-play').classList.add('hidden');
+    document.getElementById('screen-result').classList.remove('hidden');
+    document.getElementById('res-title').innerText=t;
+    document.getElementById('res-msg').innerHTML=m;
   }
-}
+};
 
-function buildPack(){
-  const easy=DB.filter(q=>q.l==="easy");
-  const med =DB.filter(q=>q.l==="medium");
-  const hard=DB.filter(q=>q.l==="hard");
-  shuffle(easy);shuffle(med);shuffle(hard);
-  return [...easy.slice(0,5),...med.slice(0,5),...hard.slice(0,5)];
-}
-
-// ===== GAME STATE =====
-let PACK = buildPack();
-let index = 0;
-
-// ===== HELP SYSTEM =====
-function lockOneHelp(){
-  const helps=document.querySelectorAll(".help-btn");
-  helps.forEach(b=>{b.disabled=false;b.classList.remove("locked");});
-  const r=Math.floor(Math.random()*helps.length);
-  helps[r].disabled=true;
-  helps[r].classList.add("locked");
-}
-
-function unlockAllHelp(){
-  document.querySelectorAll(".help-btn").forEach(b=>{
-    b.disabled=false;b.classList.remove("locked");
-  });
-}
-
-// ===== LOAD QUESTION =====
-function loadQuestion(){
-  const q=PACK[index];
-
-  if(index>=6) document.body.classList.add("hard-mode");
-  else document.body.classList.remove("hard-mode");
-
-  if(index>=12){
-    lockOneHelp();
-    if(index===12) alert("⚠️ BOSS MODE: Khóa 1 trợ giúp!");
-  }else unlockAllHelp();
-
-  document.getElementById("q").innerText=`Câu ${index+1}: `+q.q;
-  q.o.forEach((t,i)=>document.getElementById("opt"+i).innerText=t);
-}
-
-// ===== CHOOSE =====
-function choose(i){
-  const q=PACK[index];
-  if(i===q.c){
-    index++;
-    if(index<PACK.length) loadQuestion();
-    else alert("🏆 WIN 15/15 – Bạn là trùm cuối!");
-  }else{
-    alert("❌ Sai rồi! Game Over!");
-    location.reload();
-  }
-}
-
-// ===== START =====
-loadQuestion();
+function handleEnter(e){if(e.key==='Enter') game.start();}
+document.getElementById('inp-name').focus();
 </script>
 </body>
 </html>
