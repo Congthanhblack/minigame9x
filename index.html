@@ -1,3 +1,10 @@
+Sở dĩ code trước bị ngắn hơn là vì mình **chỉ gửi đoạn Script cần sửa** (để bạn dễ nhìn logic mới), chứ không gửi kèm phần giao diện (HTML/CSS) cũ.
+
+Nếu bạn copy đè đoạn đó vào file cũ thì sẽ bị mất giao diện.
+
+Dưới đây là **TOÀN BỘ CODE ĐẦY ĐỦ (FULL)** đã được ghép hoàn chỉnh. Bạn hãy copy toàn bộ nội dung bên dưới thay thế cho file cũ là chạy ngon lành nhé:
+
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -92,13 +99,13 @@ body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;
 </div>
 
 <script>
-/* ================= DATABASE ĐÃ NÂNG CẤP (ĐÁP ÁN GÂY NHIỄU) ================= */
+/* ================= DATABASE ================= */
 // Level 1: Dễ nhưng đáp án nhiễu (Câu 1-6)
 const DB_EASY = [
     {q:"1 kg sắt và 1 kg bông, cái nào nặng hơn?", o:["Sắt (Trọng lượng riêng lớn hơn)","Bông (Thể tích lớn hơn)","Bằng nhau (Đều là 1kg)","Tùy vào lực hút Trái Đất"], c:2},
     {q:"Tháng nào trong năm có 28 ngày?", o:["Chỉ có Tháng 2","Tháng 2 (Năm không nhuận)","Tất cả các tháng","Tháng 2 và các tháng chẵn"], c:2},
-    {q:"Mặt trời mọc hướng Đông, lặn hướng Tây. Vậy sao Kim mọc hướng nào?", o:["Hướng Đông","Hướng Tây","Hướng Nam","Hướng Bắc"], c:1}, // Sao Kim quay ngược chiều
-    {q:"Bánh chưng hình gì?", o:["Hình vuông (Tượng trưng Đất)","Hình hộp chữ nhật","Hình lập phương","Hình tròn (Tượng trưng Trời)"], c:0}, // Thực tế là vuông
+    {q:"Mặt trời mọc hướng Đông, lặn hướng Tây. Vậy sao Kim mọc hướng nào?", o:["Hướng Đông","Hướng Tây","Hướng Nam","Hướng Bắc"], c:1}, 
+    {q:"Bánh chưng hình gì?", o:["Hình vuông (Tượng trưng Đất)","Hình hộp chữ nhật","Hình lập phương","Hình tròn (Tượng trưng Trời)"], c:0}, 
     {q:"Cái gì tay trái cầm được còn tay phải thì không?", o:["Khuỷu tay trái","Khuỷu tay phải","Cổ tay trái","Lòng bàn tay trái"], c:1},
     {q:"Khi bắn súng người ta nhắm mắt nào?", o:["Mắt trái","Mắt phải","Nhắm một mắt (bất kỳ)","Mở cả 2 để quan sát"], c:2},
     {q:"Con gì đập thì sống, không đập thì chết?", o:["Con quay (Beyblade)","Con tim","Con cá đang bơi","Con lật đật"], c:1},
@@ -116,12 +123,12 @@ const DB_HARD = [
     {q:"Đỉnh núi cao nhất thế giới trước khi Everest được tìm ra?", o:["Đỉnh K2 (Cao thứ 2)","Đỉnh Kangchenjunga","Vẫn là Everest","Chưa có đỉnh nào"], c:2},
     {q:"Từ nào 100% người Việt phát âm sai?", o:["Từ 'Sai'","Từ 'Nghiêng'","Từ 'Ngọng'","Từ 'Lỗi'"], c:0},
     {q:"Gia đình 5 anh trai, mỗi người có 1 em gái. Nhà có mấy người con?", o:["6 người","10 người (5 trai 5 gái)","11 người","5 người"], c:0},
-    {q:"Bút + Tẩy = 11k. Bút đắt hơn Tẩy 10k. Giá cái Tẩy?", o:["1k (11-10=1)","500đ","1.5k","2k"], c:1}, // Bút 10.5, Tẩy 0.5
+    {q:"Bút + Tẩy = 11k. Bút đắt hơn Tẩy 10k. Giá cái Tẩy?", o:["1k (11-10=1)","500đ","1.5k","2k"], c:1}, 
     {q:"Một người đi dưới mưa không đội mũ, không ô mà tóc không ướt?", o:["Do đi quá nhanh","Do mặc áo mưa trùm đầu","Do người đó bị hói","Do trời mưa bóng mây"], c:2},
     {q:"Sở thú bị cháy, con gì chạy ra đầu tiên?", o:["Con Voi (To nhất)","Con Báo (Nhanh nhất)","Con Người","Con Chim (Bay ra)"], c:2},
     {q:"Bạn đang đứng thứ 2, bạn vượt qua người thứ 2. Bạn đứng thứ mấy?", o:["Thứ Nhất (Vô địch)","Thứ Hai","Thứ Ba","Thứ Tư"], c:1},
     {q:"Có 10 ngón tay trong 1 cái hộp. Đó là gì?", o:["Hộp đựng ngón tay giả","Đôi găng tay","Một vụ án mạng","Hộp quà bí ẩn"], c:1},
-    {q:"Tháng nào ngắn nhất trong năm?", o:["Tháng 2 (Ít ngày nhất)","Tháng 5 (Tên ngắn nhất)","Tháng Ba (Ba ngã Tư)","Tháng Tư"], c:2}, // "Ba" chỉ có 2 chữ cái
+    {q:"Tháng nào ngắn nhất trong năm?", o:["Tháng 2 (Ít ngày nhất)","Tháng 5 (Tên ngắn nhất)","Tháng Ba (Ba ngã Tư)","Tháng Tư"], c:2}, 
     {q:"Cái gì thuộc về bạn nhưng người khác dùng nhiều hơn?", o:["Tiền bạc","Tên của bạn","Điện thoại","Thời gian"], c:1}
 ];
 
@@ -171,12 +178,46 @@ const game = {
 
     detectGender(name) {
         const n = name.toLowerCase();
-        const male = ['hùng','cường','nam','tuấn','đạt','sơn','trung','dũng','minh','quang','khánh','duy'];
-        const female = ['lan','hoa','huệ','trang','linh','thảo','vy','hằng','tuyết','nhung','phương','hà'];
+        const male = ['hùng','cường','nam','tuấn','đạt','sơn','trung','dũng','minh','quang','khánh','duy','thắng','kiên','huy','hoàng','long'];
+        const female = ['lan','hoa','huệ','trang','linh','thảo','vy','hằng','tuyết','nhung','phương','hà','thủy','anh','ngọc','mai'];
         
         if (male.some(k => n.includes(k))) this.user.gender = "anh trai";
         else if (female.some(k => n.includes(k))) this.user.gender = "chị gái";
         else this.user.gender = "bạn yêu";
+    },
+
+    // --- HÀM TÍNH GIẢI THƯỞNG MỚI THÊM VÀO ---
+    getPrizeText(qNum) {
+        const g = (this.user.gender || "").toLowerCase();
+        const isMale = g.includes("anh") || g.includes("nam") || g.includes("trai");
+        const titleNam = "anh trai";
+        const titleNu = "chị đẹp";
+
+        // Mốc 1: Sai từ câu 1-4
+        if(qNum <= 4) {
+            return "👏 Giải thưởng: 1 tràng vỗ tay cho sự cố gắng (còn non lắm)!";
+        }
+        // Mốc 2: Đúng câu 5 (tức đang ở câu 6 hoặc sai ở câu 5,6)
+        if(qNum >= 5 && qNum < 7) {
+            return "🍭 Giải thưởng: 1 cây kẹo mút siêu ngọt ngào!";
+        }
+        // Mốc 3: Từ câu 7-9
+        if(qNum >= 7 && qNum <= 9) {
+            return "🍿 Giải thưởng: 1 gói bim bim thần thánh ăn cho đỡ buồn!";
+        }
+        // Mốc 4: Từ câu 10 trở đi (Cafe/Trà sữa Size L)
+        if(qNum >= 10 && qNum <= 14) {
+            return isMale 
+                ? `☕ Giải thưởng: 1 cốc Cafe size L cho ${titleNam} tỉnh táo!` 
+                : `🧋 Giải thưởng: 1 ly Trà sữa size L cho ${titleNu} hạ hỏa!`;
+        }
+        // Mốc 5: Đúng câu 14 (Sai ở câu 15 hoặc dừng)
+        if(qNum === 15) {
+            return isMale
+                ? "☕ Giải thưởng: Cafe size XX – Full topping uống no nê!"
+                : "🧋 Giải thưởng: Trà sữa size XX – Full topping uống quên lối về!";
+        }
+        return "";
     },
 
     loadQuestion() {
@@ -259,51 +300,56 @@ const game = {
         }
     },
 
+    // --- CẬP NHẬT LOGIC GAME OVER ĐỂ HIỆN GIẢI THƯỞNG ---
     gameOver(isTimeout) {
         const { name, gender } = this.user;
         const qNum = this.currentQ + 1;
+        
         let title = isTimeout ? "🐢 HẾT GIỜ RỒI" : "❌ TOANG RỒI";
         let msg = "";
+        
+        // Lấy text giải thưởng
+        let prize = this.getPrizeText(qNum);
 
-        if (qNum <= 5) {
-            msg = `Trời đất ơi ${name} ơi! Câu sơ sinh thế này mà cũng chọn sai được á?<br>
-                   ${gender} làm tôi thất vọng quá đi thôi! 🤣<br>
-                   <b>(Thua tại câu ${qNum} - Rank: Gà Mờ)</b>`;
-        } else if (qNum <= 10) {
-            msg = `Non và xanh lắm ${name} à!<br>
-                   Định vượt ải nhưng cuộc đời này toàn cú lừa thôi.<br>
-                   Đừng cay cú nhé ${gender}! 😜<br>
-                   <b>(Thua tại câu ${qNum} - Rank: Tập Sự)</b>`;
-        } else if (qNum < 15) {
-            msg = `Đau! Quá đau cho đội bán cau!<br>
-                   ${name} đã đi rất xa nhưng xui xẻo thôi.<br>
-                   Chút xíu nữa là thành huyền thoại rồi!<br>
-                   <b>(Thua tại câu ${qNum} - Rank: Cao Thủ)</b>`;
+        if (qNum <= 4) {
+            msg = `Trời đất ơi ${name}! Câu sơ sinh mà cũng trượt 🤣<br>
+                   ${gender} làm admin thất vọng ghê!<br>
+                   <b>(Dừng ở câu ${qNum} - Rank: Gà Mờ)</b><br><br>${prize}`;
+        } else if (qNum <= 9) {
+            msg = `${name} chơi cũng ổn áp đó!<br>
+                   Nhưng đời toàn bẫy troll thôi 😜<br>
+                   <b>(Dừng ở câu ${qNum} - Rank: Tập Sự)</b><br><br>${prize}`;
+        } else {
+            msg = `Đau cho đội bán cau 😭<br>
+                   ${name} đã tiến rất xa rồi!<br>
+                   <b>(Dừng ở câu ${qNum} - Rank: Cao Thủ)</b><br><br>${prize}`;
         }
 
         this.showEndScreen(title, msg);
     },
 
+    // --- CẬP NHẬT LOGIC CHIẾN THẮNG ---
     victory() {
         const { name } = this.user;
         this.showEndScreen(
-            "🏆 HUYỀN THOẠI", 
-            `Bái phục! Bái phục!<br>
-             ${name} chính là bộ não thiên tài của thế kỷ này.<br>
-             Admin xin được nhận một lạy! 🙏`
+            "🏆 HUYỀN THOẠI",
+            `BÁI PHỤC! 🙏<br>
+             ${name} đã phá đảo toàn bộ 15 câu hỏi hack não!<br><br>
+             😈 <b>GIẢI THƯỞNG ĐẶC BIỆT:</b><br>
+             👉 <b>Bạn được quyền yêu cầu 1 thứ bất kỳ với Chủ Game!</b><br>
+             (Coi chừng đòi quá đáng là bị block đó nha 😆)`
         );
     },
 
     showEndScreen(title, msg) {
         document.getElementById('screen-play').classList.add('hidden');
         document.getElementById('screen-start').classList.remove('hidden');
-        // Reset giao diện start screen để hiện thông báo thua
         const startDiv = document.getElementById('screen-start');
         startDiv.innerHTML = `
             <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
                 <h1 style="color:var(--wrong); font-size:2em">${title}</h1>
                 <div style="font-size:1.1em; margin:20px; line-height:1.5; color:#ddd">${msg}</div>
-                <button class="btn-main" onclick="location.reload()">Chơi lại cho đỡ cay</button>
+                <button class="btn-main" onclick="location.reload()">Chơi lại</button>
             </div>
             <div class="intro-text">
                 Mini game by NCT<br>Chúc bạn may mắn lần sau!
@@ -338,11 +384,11 @@ const game = {
                 title = "📞 GỌI NGƯỜI THÂN";
                 const rd = Math.random();
                 if(rd > 0.4) content = `Alo ${this.user.name} à? Bố vừa tra ChatGPT xong, nó bảo đáp án là <b>${correctChar}</b>. Tin hay không tùy con!`;
-                else content = `Tút... tút... Thuê bao quý khách vừa gọi hiện đang bận đi nhậu, vui lòng tự chọn bừa! (Đen thôi)`;
+                else content = `Tút... tút... Thuê bao quý khách vừa gọi hiện đang bận đi nhậu, vui lòng tự chọn bừa!`;
                 break;
             case 'audience':
                 title = "👥 KHÁN GIẢ TRƯỜNG QUAY";
-                content = `98% khán giả (toàn giáo sư) đều chọn đáp án <b>${correctChar}</b>.<br>Họ bảo ai chọn khác là "người sao Hỏa"!`;
+                content = `98% khán giả đều chọn đáp án <b>${correctChar}</b>.<br>Họ bảo ai chọn khác là "người sao Hỏa"!`;
                 break;
             case 'expert':
                 title = "🧙 TỔ TƯ VẤN CẤP CAO";
@@ -372,3 +418,5 @@ const game = {
 </script>
 </body>
 </html>
+
+```
